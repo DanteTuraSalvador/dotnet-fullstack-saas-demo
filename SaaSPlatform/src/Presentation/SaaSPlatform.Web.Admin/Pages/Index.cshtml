@@ -1,0 +1,157 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Azure SaaS Administration Dashboard</h1>
+    <p class="lead">Manage client subscription requests and Azure deployments.</p>
+    
+    <div class="row mt-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Pending Requests</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Approved Requests</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ApprovedCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Deployed Services</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.DeployedCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cloud fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Rejected Requests</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.RejectedCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Subscription Requests</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Contact</th>
+                                    <th>Business Type</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var subscription in Model.Subscriptions)
+                                {
+                                    <tr>
+                                        <td>@subscription.CompanyName</td>
+                                        <td>@subscription.ContactEmail</td>
+                                        <td>@subscription.BusinessType</td>
+                                        <td>@subscription.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            @if (subscription.Status == "Pending")
+                                            {
+                                                <span class="badge badge-warning">Pending</span>
+                                            }
+                                            else if (subscription.Status == "Approved")
+                                            {
+                                                <span class="badge badge-success">Approved</span>
+                                            }
+                                            else if (subscription.Status == "Deployed")
+                                            {
+                                                <span class="badge badge-info">Deployed</span>
+                                            }
+                                            else if (subscription.Status == "Rejected")
+                                            {
+                                                <span class="badge badge-danger">Rejected</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (subscription.Status == "Pending")
+                                            {
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="d-inline">
+                                                    <input type="hidden" name="id" value="@subscription.Id" />
+                                                    <input type="hidden" name="status" value="Approved" />
+                                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                                </form>
+                                                <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="d-inline">
+                                                    <input type="hidden" name="id" value="@subscription.Id" />
+                                                    <input type="hidden" name="status" value="Rejected" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                                </form>
+                                            }
+                                            else if (subscription.Status == "Approved")
+                                            {
+                                                <form method="post" asp-page-handler="Deploy" asp-antiforgery="true" class="d-inline">
+                                                    <input type="hidden" name="id" value="@subscription.Id" />
+                                                    <button type="submit" class="btn btn-info btn-sm">Deploy</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No actions</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # Azurite - Azure Storage Emulator
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: saasplatform_azurite
+    ports:
+      - "10000:10000"  # Blob service
+      - "10001:10001"  # Queue service
+      - "10002:10002"  # Table service
+    volumes:
+      - azurite_data:/data
+    command: "azurite --loose --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0"
+    networks:
+      - saasplatform_network
+
+  # SQL Server for application database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: saasplatform_sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - saasplatform_network
+
+  # Seq for logging
+  seq:
+    image: datalust/seq:latest
+    container_name: saasplatform_seq
+    ports:
+      - "5342:80"  # Changed from 5341 to 5342 to avoid port conflict
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=YourStrong@Passw0rd  # Add admin password
+    volumes:
+      - seq_data:/data
+    networks:
+      - saasplatform_network
+
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: src/Api/SaaSPlatform.Api/Dockerfile
+    container_name: saasplatform_api
+    ports:
+      - "5153:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Container
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SaaSPlatformDb;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;
+      - Serilog__WriteTo__0__Args__serverUrl=http://seq:80
+    networks:
+      - saasplatform_network
+    depends_on:
+      - sqlserver
+      - seq
+
+  # Client Web Application
+  client-web:
+    build:
+      context: .
+      dockerfile: src/Presentation/SaaSPlatform.Web.Client/Dockerfile
+    container_name: saasplatform_client_web
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Container
+    networks:
+      - saasplatform_network
+    depends_on:
+      - api
+
+  # Admin Web Application
+  admin-web:
+    build:
+      context: .
+      dockerfile: src/Presentation/SaaSPlatform.Web.Admin/Dockerfile
+    container_name: saasplatform_admin_web
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Container
+    networks:
+      - saasplatform_network
+    depends_on:
+      - api
+
+volumes:
+  azurite_data:
+  sqlserver_data:
+  seq_data:
+
+networks:
+  saasplatform_network:
+    driver: bridge

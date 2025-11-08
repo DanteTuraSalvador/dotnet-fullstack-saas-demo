@@ -1,0 +1,43 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Client Subscription";
+}
+
+<div class="container">
+    <h1 class="mt-4">Azure SaaS Subscription Request</h1>
+    <p class="lead">Fill out this form to request Azure infrastructure provisioning.</p>
+    
+    <form method="post" class="mt-4">
+        <div class="form-group">
+            <label for="companyName">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="companyName" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="contactEmail">Contact Email</label>
+            <input type="email" class="form-control" id="contactEmail" name="contactEmail" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="contactPerson">Contact Person</label>
+            <input type="text" class="form-control" id="contactPerson" name="contactPerson" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="businessType">Business Type</label>
+            <select class="form-control" id="businessType" name="businessType" required>
+                <option value="">Select Business Type</option>
+                <option value="Technology">Technology</option>
+                <option value="Finance">Finance</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Education">Education</option>
+                <option value="Retail">Retail</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">Submit Subscription Request</button>
+    </form>
+</div>

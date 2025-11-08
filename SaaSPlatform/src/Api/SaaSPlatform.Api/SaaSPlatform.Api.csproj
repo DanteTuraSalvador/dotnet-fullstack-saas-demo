@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\SaaSPlatform.Domain\SaaSPlatform.Domain.csproj" />
+    <ProjectReference Include="..\..\Application\SaaSPlatform.Application\SaaSPlatform.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\SaaSPlatform.Infrastructure\SaaSPlatform.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\SaaSPlatform.ServiceDefaults\SaaSPlatform.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
