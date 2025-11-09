@@ -1,0 +1,86 @@
+@model IReadOnlyList<SaaSPlatform.Application.Models.SubscriptionResponse>
+@{
+    ViewData["Title"] = "Azure Deployments";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Azure Deployments</h1>
+    <p class="lead">Monitor and manage Azure resource deployments.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Active Deployments</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Resources</th>
+                            <th>Deployment Date</th>
+                            <th>Status</th>
+                            <th>Resource Group</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var deployment in Model)
+                        {
+                            <tr>
+                                <td>@deployment.CompanyName</td>
+                                <td>App Service, SQL DB</td>
+                                <td>@deployment.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                <td><span class="badge badge-success">Completed</span></td>
+                                <td>@(deployment.AzureResourceGroup ?? "-")</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" disabled>View Resources</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Deployment Logs</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Deployment</th>
+                            <th>Message</th>
+                            <th>Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-11-04 14:30:22</td>
+                            <td>Health Plus LLC</td>
+                            <td>Creating resource group rg-healthplus-20251104</td>
+                            <td><span class="badge badge-info">Info</span></td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-04 14:31:15</td>
+                            <td>Health Plus LLC</td>
+                            <td>Deploying App Service plan</td>
+                            <td><span class="badge badge-info">Info</span></td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-04 14:35:42</td>
+                            <td>Health Plus LLC</td>
+                            <td>Deployment completed successfully</td>
+                            <td><span class="badge badge-success">Success</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

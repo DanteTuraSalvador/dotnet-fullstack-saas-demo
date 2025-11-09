@@ -1,0 +1,53 @@
+@model SaaSPlatform.Web.Client.Mvc.Models.SubscriptionFormViewModel
+@{
+    ViewData["Title"] = "Client Subscription";
+}
+
+<div class="container">
+    <h1 class="mt-4">Azure SaaS Subscription Request</h1>
+    <p class="lead">Fill out this form to request Azure infrastructure provisioning.</p>
+
+    <form asp-action="Index" method="post" class="mt-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="CompanyName" class="form-label"></label>
+            <input asp-for="CompanyName" class="form-control" />
+            <span asp-validation-for="CompanyName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ContactEmail" class="form-label"></label>
+            <input asp-for="ContactEmail" class="form-control" />
+            <span asp-validation-for="ContactEmail" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ContactPerson" class="form-label"></label>
+            <input asp-for="ContactPerson" class="form-control" />
+            <span asp-validation-for="ContactPerson" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="BusinessType" class="form-label"></label>
+            <select asp-for="BusinessType" class="form-control">
+                <option value="">Select Business Type</option>
+                <option>Technology</option>
+                <option>Finance</option>
+                <option>Healthcare</option>
+                <option>Education</option>
+                <option>Retail</option>
+                <option>Manufacturing</option>
+                <option>Other</option>
+            </select>
+            <span asp-validation-for="BusinessType" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Subscription Request</button>
+        <a asp-controller="Status" asp-action="Index" class="btn btn-link mt-3">Check Request Status</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

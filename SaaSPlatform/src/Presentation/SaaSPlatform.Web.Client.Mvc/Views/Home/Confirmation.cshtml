@@ -1,0 +1,32 @@
+@model SaaSPlatform.Web.Client.Mvc.Models.SubmissionSummaryViewModel
+@{
+    ViewData["Title"] = "Subscription Confirmation";
+}
+
+<div class="container">
+    <h1 class="mt-4">Subscription Request Submitted</h1>
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Thank you!</h4>
+        <p>@Model.SuccessMessage</p>
+        <hr>
+        <p class="mb-0">An administrator will review your request and contact you shortly.</p>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Request Details</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Company Name:</strong> @Model.CompanyName</p>
+            <p><strong>Contact Email:</strong> @Model.ContactEmail</p>
+            <p><strong>Contact Person:</strong> @Model.ContactPerson</p>
+            <p><strong>Business Type:</strong> @Model.BusinessType</p>
+            <p><strong>Status:</strong> <span class="badge badge-warning">@Model.Status</span></p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-primary">Submit Another Request</a>
+        <a asp-controller="Status" asp-action="Index" asp-route-email="@Model.ContactEmail" class="btn btn-secondary">Check Request Status</a>
+    </div>
+</div>

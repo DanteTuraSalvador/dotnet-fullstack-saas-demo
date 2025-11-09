@@ -1,10 +1,18 @@
+using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+var apiBaseAddress = builder.Configuration["services:api:0:uri"]
+    ?? builder.Configuration["ApiClient:BaseAddress"]
+    ?? "http://localhost:5153";
+
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5153"); // API service address
+    client.BaseAddress = new Uri(apiBaseAddress);
 });
 builder.Services.AddSession(options =>
 {
@@ -32,5 +40,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
+
+app.MapDefaultEndpoints();
 
 app.Run();

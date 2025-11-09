@@ -1,0 +1,76 @@
+@model SaaSPlatform.Web.Client.Mvc.Models.StatusSearchViewModel
+@{
+    ViewData["Title"] = "Subscription Status";
+}
+
+@functions {
+    string GetBadge(string? status) => status switch
+    {
+        "Pending" => "badge badge-warning",
+        "Approved" => "badge badge-success",
+        "Deployed" => "badge badge-info",
+        "Rejected" => "badge badge-danger",
+        _ => "badge badge-secondary"
+    };
+}
+
+<div class="container">
+    <h1 class="mt-4">Subscription Request Status</h1>
+    <p class="lead">Check the status of your Azure SaaS subscription requests.</p>
+
+    <form method="get" asp-action="Index" class="mt-4">
+        <div class="form-group">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="Enter email to search for requests" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
+    </form>
+
+    @if (Model.SearchPerformed)
+    {
+        if (Model.Subscriptions?.Any() == true)
+        {
+            <div class="mt-4">
+                <h3>Your Subscription Requests</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Contact Person</th>
+                                <th>Business Type</th>
+                                <th>Submitted Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subscription in Model.Subscriptions)
+                            {
+                                <tr>
+                                    <td>@subscription.CompanyName</td>
+                                    <td>@subscription.ContactPerson</td>
+                                    <td>@subscription.BusinessType</td>
+                                    <td>@subscription.CreatedDate.ToString("MM/dd/yyyy")</td>
+                                    <td>
+                                        <span class="@GetBadge(subscription.Status)">@subscription.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mt-4" role="alert">
+                <p>No subscription requests found for the provided email address.</p>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

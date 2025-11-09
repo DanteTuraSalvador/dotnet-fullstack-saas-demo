@@ -1,0 +1,91 @@
+@model IReadOnlyList<SaaSPlatform.Application.Models.SubscriptionResponse>
+@{
+    ViewData["Title"] = "Manage Subscriptions";
+}
+
+@functions {
+    string GetBadge(string? status) => status switch
+    {
+        "Pending" => "badge badge-warning",
+        "Approved" => "badge badge-success",
+        "Deployed" => "badge badge-info",
+        "Rejected" => "badge badge-danger",
+        _ => "badge badge-secondary"
+    };
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Manage Subscriptions</h1>
+    <p class="lead">Review and manage client subscription requests.</p>
+
+    @if (TempData["Success"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+    @if (TempData["Error"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Subscription Requests</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Contact</th>
+                            <th>Business Type</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subscription in Model)
+                        {
+                            <tr>
+                                <td>@subscription.CompanyName</td>
+                                <td>@subscription.ContactEmail</td>
+                                <td>@subscription.BusinessType</td>
+                                <td>@subscription.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <span class="@GetBadge(subscription.Status)">@subscription.Status</span>
+                                </td>
+                                <td>
+                                    @if (subscription.Status == "Pending")
+                                    {
+                                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@subscription.Id" />
+                                            <input type="hidden" name="status" value="Approved" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@subscription.Id" />
+                                            <input type="hidden" name="status" value="Rejected" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                        </form>
+                                    }
+                                    else if (subscription.Status == "Approved")
+                                    {
+                                        <form asp-action="Deploy" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@subscription.Id" />
+                                            <button type="submit" class="btn btn-info btn-sm">Deploy</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No actions</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

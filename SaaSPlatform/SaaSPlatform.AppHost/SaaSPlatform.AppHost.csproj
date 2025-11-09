@@ -14,7 +14,9 @@
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.2" />
     <ProjectReference Include="..\src\Api\SaaSPlatform.Api\SaaSPlatform.Api.csproj" />
     <ProjectReference Include="..\src\Presentation\SaaSPlatform.Web.Client\SaaSPlatform.Web.Client.csproj" />
+    <ProjectReference Include="..\src\Presentation\SaaSPlatform.Web.Client.Mvc\SaaSPlatform.Web.Client.Mvc.csproj" />
     <ProjectReference Include="..\src\Presentation\SaaSPlatform.Web.Admin\SaaSPlatform.Web.Admin.csproj" />
+    <ProjectReference Include="..\src\Presentation\SaaSPlatform.Web.Admin.Mvc\SaaSPlatform.Web.Admin.Mvc.csproj" />
   </ItemGroup>
 
 </Project>
