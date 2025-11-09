@@ -84,6 +84,10 @@ SaaSPlatform.sln
 
 ### Frontend Technologies
 - **ASP.NET Core Razor Pages** - Server-rendered applications
+- **ASP.NET Core MVC** - Traditional MVC admin/client variants
+- **Angular 18 SPA** - Modern client experience consuming shared API
+- **React 19 SPA (Vite + TypeScript)** - Alternate SPA showcasing the same workflows
+- **Blazor WebAssembly** - .NET-based SPA consuming the shared API
 - **Clean Architecture** - Proper separation of concerns
 
 ### DevOps & Observability
@@ -119,6 +123,29 @@ dotnet run --project src/Presentation/SaaSPlatform.Web.Client
 # In another terminal, run the Admin Web
 dotnet run --project src/Presentation/SaaSPlatform.Web.Admin
 ```
+
+### Angular Client (SPA)
+```bash
+cd src/Presentation/SaaSPlatform.Web.Client.Angular
+npm install          # first run
+npm start            # serves on http://localhost:4200
+```
+The Angular app calls the shared API at `http://localhost:5153`. Update the values in `src/environments/environment*.ts` if your API runs elsewhere.
+
+### React Client (SPA)
+```bash
+cd src/Presentation/SaaSPlatform.Web.Client.React
+npm install          # first run
+npm run dev          # serves on http://localhost:5173 by default
+```
+Set `VITE_API_BASE_URL` in `.env.*` if you expose the API on a different host/port. Under Aspire, the React client is accessible via the proxy URL (default https://localhost:44400).
+
+### Blazor Client (SPA)
+```bash
+cd src/Presentation/SaaSPlatform.Web.Client.Blazor
+dotnet run
+```
+The Blazor WebAssembly app reads `ApiBaseUrl` from `wwwroot/appsettings*.json` (defaults to `https://localhost:7264`). When hosted via Aspire, use the portal link (default https://localhost:44500) to open the dev server.
 
 ### Using .NET Aspire (Recommended)
 ```bash
@@ -190,17 +217,18 @@ dotnet run --project SaaSPlatform.AppHost
 
 ### Sprint 2: Multiple Frontend Technologies (2 weeks)
 **Goals:**
-- [ ] Create MVC versions of client/admin interfaces
-- [ ] Build Angular SPA client interface
-- [ ] Build React SPA client interface
+- [x] Create MVC versions of client/admin interfaces
+- [x] Build Angular SPA client interface
+- [x] Build React SPA client interface
+- [x] Build Blazor SPA client interface
 - [ ] Ensure all frontends use shared Web API
 - [ ] Implement consistent styling
 
 **Deliverables:**
-- 4 frontend technologies working
-- Shared API consumption patterns
-- Consistent user experience
-- Technology comparison documentation
+- [x] 5 frontend technologies working
+- [ ] Shared API consumption patterns
+- [ ] Consistent user experience
+- [ ] Technology comparison documentation
 
 ### Sprint 3: Authentication & Security (2 weeks)
 **Goals:**

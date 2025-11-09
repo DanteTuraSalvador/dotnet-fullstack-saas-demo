@@ -1,3 +1,5 @@
+using System.IO;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add projects to Aspire orchestration
@@ -13,6 +15,20 @@ var adminWeb = builder.AddProject<Projects.SaaSPlatform_Web_Admin>("admin-web")
     .WithReference(api);
 
 var adminMvc = builder.AddProject<Projects.SaaSPlatform_Web_Admin_Mvc>("admin-mvc")
+    .WithReference(api);
+
+var angularWorkingDirectory = Path.Combine("..", "src", "Presentation", "SaaSPlatform.Web.Client.Angular");
+
+builder.AddExecutable("client-angular", "pwsh", "-NoLogo", "-File", "./run-angular.ps1", "-Port", "4300", "-ListenHost", "0.0.0.0")
+    .WithWorkingDirectory(angularWorkingDirectory)
+    .WithHttpEndpoint(port: 44300, targetPort: 4300)
+    .WithReference(api);
+
+var reactWorkingDirectory = Path.Combine("..", "src", "Presentation", "SaaSPlatform.Web.Client.React");
+
+builder.AddExecutable("client-react", "pwsh", "-NoLogo", "-File", "./run-react.ps1", "-Port", "4400", "-ListenHost", "0.0.0.0")
+    .WithWorkingDirectory(reactWorkingDirectory)
+    .WithHttpEndpoint(port: 44400, targetPort: 4400)
     .WithReference(api);
 
 builder.Build().Run();

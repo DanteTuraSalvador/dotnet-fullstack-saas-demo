@@ -1,0 +1,19 @@
+@use "bootstrap/scss/bootstrap";
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.navbar-brand {
+  font-weight: 600;
+}
+
+.nav-link.active {
+  font-weight: 600;
+}
+
+.card {
+  border-radius: 0.5rem;
+}

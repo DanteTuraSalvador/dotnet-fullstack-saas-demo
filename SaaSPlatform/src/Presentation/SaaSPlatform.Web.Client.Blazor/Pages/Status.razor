@@ -1,0 +1,127 @@
+@page "/status"
+
+<PageTitle>Subscription Status</PageTitle>
+
+@inject SubscriptionService SubscriptionService
+
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <h1 class="mt-2">Subscription Request Status</h1>
+        <p className="lead text-muted">Enter the email address used in your subscription request.</p>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @_errorMessage
+            </div>
+        }
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <EditForm Model="_searchModel" OnValidSubmit="HandleSearch">
+                    <DataAnnotationsValidator />
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label" for="statusEmail">Email Address</label>
+                            <InputText id="statusEmail" class="form-control" @bind-Value="_searchModel.Email" />
+                            <ValidationMessage For="@(() => _searchModel.Email)" />
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary w-100" type="submit" disabled="_isSearching">
+                                @_searchLabel
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+
+        @if (_searchPerformed)
+        {
+            if (_results.Count > 0)
+            {
+                <div class="table-responsive shadow-sm rounded bg-white">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Contact Person</th>
+                                <th>Business Type</th>
+                                <th>Submitted Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subscription in _results)
+                            {
+                                <tr>
+                                    <td>@subscription.CompanyName</td>
+                                    <td>@subscription.ContactPerson</td>
+                                    <td>@subscription.BusinessType</td>
+                                    <td>@subscription.CreatedDate.ToString("MM/dd/yyyy")</td>
+                                    <td>
+                                        <span class="@GetBadgeClass(subscription.Status)">@subscription.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    No subscription requests found for the provided email address.
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private readonly SearchModel _searchModel = new();
+    private readonly List<SubscriptionResponse> _results = [];
+    private bool _isSearching;
+    private bool _searchPerformed;
+    private string? _errorMessage;
+
+    private string _searchLabel => _isSearching ? "Searching..." : "Search";
+
+    private async Task HandleSearch()
+    {
+        _isSearching = true;
+        _errorMessage = null;
+        _searchPerformed = true;
+        _results.Clear();
+
+        try
+        {
+            var subscriptions = await SubscriptionService.GetSubscriptionsByEmailAsync(_searchModel.Email);
+            _results.AddRange(subscriptions);
+        }
+        catch
+        {
+            _errorMessage = "Unable to retrieve subscription requests at the moment. Please retry.";
+        }
+        finally
+        {
+            _isSearching = false;
+        }
+    }
+
+    private static string GetBadgeClass(string status) => status?.ToLowerInvariant() switch
+    {
+        "pending" => "badge bg-warning text-dark",
+        "approved" => "badge bg-success",
+        "deployed" => "badge bg-info text-dark",
+        "rejected" => "badge bg-danger",
+        _ => "badge bg-secondary"
+    };
+
+    private class SearchModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+}

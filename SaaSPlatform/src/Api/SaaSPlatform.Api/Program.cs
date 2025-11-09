@@ -21,6 +21,26 @@ public partial class Program
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontendClients", policy =>
+            {
+                policy.WithOrigins(
+                        "http://localhost:4200",
+                        "https://localhost:4200",
+                        "http://localhost:4300",
+                        "https://localhost:4300",
+                        "http://localhost:4400",
+                        "https://localhost:4400",
+                        "http://localhost:44300",
+                        "https://localhost:44300",
+                        "http://localhost:44400",
+                        "https://localhost:44400")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
         // Add controllers
         builder.Services.AddControllers();
 
@@ -38,6 +58,7 @@ public partial class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("AllowFrontendClients");
 
         app.MapControllers();
 

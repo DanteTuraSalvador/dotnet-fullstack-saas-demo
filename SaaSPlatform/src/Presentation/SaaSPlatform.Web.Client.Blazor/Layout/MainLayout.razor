@@ -1,0 +1,34 @@
+@inherits LayoutComponentBase
+
+<div class="d-flex flex-column min-vh-100">
+    <header class="border-bottom bg-white shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <a class="navbar-brand fw-semibold" href="">SaaSPlatform Blazor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Request Subscription</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="status">Check Status</NavLink>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4 flex-grow-1">
+        @Body
+    </main>
+
+    <footer class="border-top py-3 text-muted bg-white">
+        <div class="container d-flex justify-content-between small flex-wrap gap-2">
+            <span>&copy; @DateTime.Now.Year SaaSPlatform</span>
+            <span>Blazor Client</span>
+        </div>
+    </footer>
+</div>

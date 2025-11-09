@@ -1,0 +1,74 @@
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <h1 class="mt-2">Subscription Request Status</h1>
+    <p class="lead text-muted">Enter the email address you used when submitting your request.</p>
+
+    <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
+      {{ errorMessage() }}
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body p-4">
+        <form [formGroup]="form" (ngSubmit)="search()" class="row g-3" novalidate>
+          <div class="col-md-8">
+            <label class="form-label" for="statusEmail">Email Address</label>
+            <input
+              id="statusEmail"
+              type="email"
+              class="form-control"
+              [class.is-invalid]="form.controls.email.invalid && (form.controls.email.touched || form.controls.email.dirty)"
+              formControlName="email"
+              placeholder="admin@contoso.com"
+            />
+            <div class="invalid-feedback">A valid email address is required.</div>
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading()">
+              <span
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+                *ngIf="isLoading()"
+              ></span>
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div *ngIf="searchPerformed()">
+      <div *ngIf="subscriptions().length > 0; else noResults">
+        <div class="table-responsive shadow-sm rounded bg-white">
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Business Type</th>
+                <th>Submitted Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let subscription of subscriptions()">
+                <td>{{ subscription.companyName }}</td>
+                <td>{{ subscription.contactPerson }}</td>
+                <td>{{ subscription.businessType }}</td>
+                <td>{{ subscription.createdDate | date: 'MM/dd/yyyy' }}</td>
+                <td>
+                  <span class="{{ badgeClass(subscription.status) }}">{{ subscription.status }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <ng-template #noResults>
+        <div class="alert alert-info" role="alert">
+          No subscription requests found for the provided email address.
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

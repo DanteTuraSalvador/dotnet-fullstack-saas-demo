@@ -1,0 +1,113 @@
+@page "/"
+
+<PageTitle>Azure SaaS Subscription Request</PageTitle>
+
+@inject SubscriptionService SubscriptionService
+@inject SubmissionSummaryState SummaryState
+@inject NavigationManager NavigationManager
+
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <h1 class="mt-2">Azure SaaS Subscription Request</h1>
+        <p class="lead text-muted">
+            Fill out this form to request Azure infrastructure provisioning for your organization.
+        </p>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @_errorMessage
+            </div>
+        }
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <EditForm Model="_form" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label" for="companyName">Company Name</label>
+                        <InputText id="companyName" class="form-control" @bind-Value="_form.CompanyName" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="contactEmail">Contact Email</label>
+                        <InputText id="contactEmail" class="form-control" @bind-Value="_form.ContactEmail" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="contactPerson">Contact Person</label>
+                        <InputText id="contactPerson" class="form-control" @bind-Value="_form.ContactPerson" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="businessType">Business Type</label>
+                        <InputSelect id="businessType" class="form-select" @bind-Value="_form.BusinessType">
+                            <option value="">Select business type</option>
+                            @foreach (var type in _businessTypes)
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <div class="d-flex gap-3 flex-wrap">
+                        <button class="btn btn-primary" type="submit" disabled="_isSubmitting">
+                            @_submitLabel
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" @onclick="NavigateToStatus">
+                            Check Request Status
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private readonly string[] _businessTypes = new[]
+    {
+        "Technology", "Finance", "Healthcare", "Education", "Retail", "Manufacturing", "Other"
+    };
+
+    private CreateSubscriptionRequest _form = new();
+    private bool _isSubmitting;
+    private string? _errorMessage;
+
+    private string _submitLabel => _isSubmitting ? "Submitting..." : "Submit Subscription Request";
+
+    private async Task HandleValidSubmit()
+    {
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        try
+        {
+            await SubscriptionService.CreateSubscriptionAsync(_form);
+
+            SummaryState.LatestSummary = new SubmissionSummary
+            {
+                CompanyName = _form.CompanyName,
+                ContactEmail = _form.ContactEmail,
+                ContactPerson = _form.ContactPerson,
+                BusinessType = _form.BusinessType,
+                Status = "Pending Approval"
+            };
+
+            _form = new CreateSubscriptionRequest();
+            NavigationManager.NavigateTo("/confirmation");
+        }
+        catch
+        {
+            _errorMessage = "Unable to submit your request right now. Please try again later.";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private void NavigateToStatus() => NavigationManager.NavigateTo("/status");
+}
