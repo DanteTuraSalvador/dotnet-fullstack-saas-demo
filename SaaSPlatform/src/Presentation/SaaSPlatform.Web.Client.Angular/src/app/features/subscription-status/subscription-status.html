@@ -1,74 +1,79 @@
-<div class="row justify-content-center">
-  <div class="col-xl-10">
-    <h1 class="mt-2">Subscription Request Status</h1>
-    <p class="lead text-muted">Enter the email address you used when submitting your request.</p>
+<div class="mx-auto max-w-4xl space-y-6">
+  <div class="space-y-2 text-center">
+    <p class="text-sm font-semibold uppercase tracking-wide text-primary">Track requests</p>
+    <h1 class="section-heading">Subscription Request Status</h1>
+    <p class="section-subheading">Enter the email address you used when submitting your request.</p>
+  </div>
 
-    <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
-      {{ errorMessage() }}
-    </div>
+  <div *ngIf="errorMessage()" class="rounded-2xl border border-rose-200 bg-rose-50/80 p-4 text-rose-700">
+    {{ errorMessage() }}
+  </div>
 
-    <div class="card shadow-sm mb-4">
-      <div class="card-body p-4">
-        <form [formGroup]="form" (ngSubmit)="search()" class="row g-3" novalidate>
-          <div class="col-md-8">
-            <label class="form-label" for="statusEmail">Email Address</label>
-            <input
-              id="statusEmail"
-              type="email"
-              class="form-control"
-              [class.is-invalid]="form.controls.email.invalid && (form.controls.email.touched || form.controls.email.dirty)"
-              formControlName="email"
-              placeholder="admin@contoso.com"
-            />
-            <div class="invalid-feedback">A valid email address is required.</div>
-          </div>
-          <div class="col-md-4 d-flex align-items-end">
-            <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading()">
-              <span
-                class="spinner-border spinner-border-sm me-2"
-                role="status"
-                aria-hidden="true"
-                *ngIf="isLoading()"
-              ></span>
-              Search
-            </button>
-          </div>
-        </form>
+  <div class="surface-card">
+    <form class="grid gap-4 md:grid-cols-3" [formGroup]="form" (ngSubmit)="search()" novalidate>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-semibold text-slate-600" for="statusEmail">Email Address</label>
+        <input
+          id="statusEmail"
+          type="email"
+          class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40"
+          [class.border-rose-400]="form.controls.email.invalid && (form.controls.email.touched || form.controls.email.dirty)"
+          [class.ring-rose-200]="form.controls.email.invalid && (form.controls.email.touched || form.controls.email.dirty)"
+          formControlName="email"
+          placeholder="admin@contoso.com"
+        />
+        <p class="mt-2 text-sm text-rose-600" *ngIf="form.controls.email.invalid && (form.controls.email.touched || form.controls.email.dirty)">
+          A valid email address is required.
+        </p>
+      </div>
+      <div class="md:self-end">
+        <button
+          class="h-full w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition disabled:opacity-60"
+          type="submit"
+          [disabled]="isLoading()"
+        >
+          <span
+            class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+            *ngIf="isLoading()"
+          ></span>
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="searchPerformed()">
+    <div *ngIf="subscriptions().length > 0; else noResults">
+      <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+        <table class="min-w-full divide-y divide-slate-100 text-sm">
+          <thead class="bg-slate-50 text-left font-semibold text-slate-600">
+            <tr>
+              <th class="px-6 py-3">Company</th>
+              <th class="px-6 py-3">Contact</th>
+              <th class="px-6 py-3">Business Type</th>
+              <th class="px-6 py-3">Submitted Date</th>
+              <th class="px-6 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <tr *ngFor="let subscription of subscriptions()" class="text-slate-700">
+              <td class="px-6 py-4 font-semibold text-slate-900">{{ subscription.companyName }}</td>
+              <td class="px-6 py-4">{{ subscription.contactPerson }}</td>
+              <td class="px-6 py-4">{{ subscription.businessType }}</td>
+              <td class="px-6 py-4">{{ subscription.createdDate | date: 'MM/dd/yyyy' }}</td>
+              <td class="px-6 py-4">
+                <span class="{{ badgeClass(subscription.status) }}">{{ subscription.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <div *ngIf="searchPerformed()">
-      <div *ngIf="subscriptions().length > 0; else noResults">
-        <div class="table-responsive shadow-sm rounded bg-white">
-          <table class="table table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Business Type</th>
-                <th>Submitted Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let subscription of subscriptions()">
-                <td>{{ subscription.companyName }}</td>
-                <td>{{ subscription.contactPerson }}</td>
-                <td>{{ subscription.businessType }}</td>
-                <td>{{ subscription.createdDate | date: 'MM/dd/yyyy' }}</td>
-                <td>
-                  <span class="{{ badgeClass(subscription.status) }}">{{ subscription.status }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <ng-template #noResults>
+      <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 text-slate-600">
+        No subscription requests found for the provided email address.
       </div>
-      <ng-template #noResults>
-        <div class="alert alert-info" role="alert">
-          No subscription requests found for the provided email address.
-        </div>
-      </ng-template>
-    </div>
+    </ng-template>
   </div>
 </div>
+

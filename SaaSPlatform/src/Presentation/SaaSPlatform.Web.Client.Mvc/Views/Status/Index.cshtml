@@ -4,68 +4,76 @@
 }
 
 @functions {
-    string GetBadge(string? status) => status switch
+    string GetBadge(string? status)
     {
-        "Pending" => "badge badge-warning",
-        "Approved" => "badge badge-success",
-        "Deployed" => "badge badge-info",
-        "Rejected" => "badge badge-danger",
-        _ => "badge badge-secondary"
-    };
+        const string baseClass = "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset";
+        return status switch
+        {
+            "Pending" => $"{baseClass} bg-amber-50 text-amber-700 ring-amber-200",
+            "Approved" => $"{baseClass} bg-emerald-50 text-emerald-700 ring-emerald-200",
+            "Deployed" => $"{baseClass} bg-sky-50 text-sky-700 ring-sky-200",
+            "Rejected" => $"{baseClass} bg-rose-50 text-rose-700 ring-rose-200",
+            _ => $"{baseClass} bg-slate-100 text-slate-600 ring-slate-200"
+        };
+    }
 }
 
-<div class="container">
-    <h1 class="mt-4">Subscription Request Status</h1>
-    <p class="lead">Check the status of your Azure SaaS subscription requests.</p>
+<div class="mx-auto max-w-4xl space-y-6">
+    <div class="space-y-2 text-center">
+        <p class="text-sm font-semibold uppercase tracking-wide text-primary">Track requests</p>
+        <h1 class="section-heading">Subscription Request Status</h1>
+        <p class="section-subheading">Enter the email address used in your subscription request.</p>
+    </div>
 
-    <form method="get" asp-action="Index" class="mt-4">
-        <div class="form-group">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" placeholder="Enter email to search for requests" />
-            <span asp-validation-for="Email" class="text-danger"></span>
+    <form method="get" asp-action="Index" class="surface-card grid gap-4 md:grid-cols-3">
+        <div class="md:col-span-2">
+            <label asp-for="Email" class="block text-sm font-semibold text-slate-600"></label>
+            <input asp-for="Email" class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40" placeholder="admin@contoso.com" />
+            <span asp-validation-for="Email" class="mt-2 block text-sm text-rose-600"></span>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Search</button>
+        <div class="md:self-end">
+            <button type="submit" class="h-full w-full rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition">
+                Search
+            </button>
+        </div>
     </form>
 
     @if (Model.SearchPerformed)
     {
         if (Model.Subscriptions?.Any() == true)
         {
-            <div class="mt-4">
-                <h3>Your Subscription Requests</h3>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Company</th>
-                                <th>Contact Person</th>
-                                <th>Business Type</th>
-                                <th>Submitted Date</th>
-                                <th>Status</th>
+            <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+                <table class="min-w-full divide-y divide-slate-100 text-sm">
+                    <thead class="bg-slate-50 text-left font-semibold text-slate-600">
+                        <tr>
+                            <th class="px-6 py-3">Company</th>
+                            <th class="px-6 py-3">Contact Person</th>
+                            <th class="px-6 py-3">Business Type</th>
+                            <th class="px-6 py-3">Submitted Date</th>
+                            <th class="px-6 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        @foreach (var subscription in Model.Subscriptions)
+                        {
+                            <tr class="text-slate-700">
+                                <td class="px-6 py-4 font-semibold text-slate-900">@subscription.CompanyName</td>
+                                <td class="px-6 py-4">@subscription.ContactPerson</td>
+                                <td class="px-6 py-4">@subscription.BusinessType</td>
+                                <td class="px-6 py-4">@subscription.CreatedDate.ToString("MM/dd/yyyy")</td>
+                                <td class="px-6 py-4">
+                                    <span class="@GetBadge(subscription.Status)">@subscription.Status</span>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var subscription in Model.Subscriptions)
-                            {
-                                <tr>
-                                    <td>@subscription.CompanyName</td>
-                                    <td>@subscription.ContactPerson</td>
-                                    <td>@subscription.BusinessType</td>
-                                    <td>@subscription.CreatedDate.ToString("MM/dd/yyyy")</td>
-                                    <td>
-                                        <span class="@GetBadge(subscription.Status)">@subscription.Status</span>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
         else
         {
-            <div class="alert alert-info mt-4" role="alert">
-                <p>No subscription requests found for the provided email address.</p>
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 text-slate-600">
+                No subscription requests found for the provided email address.
             </div>
         }
     }

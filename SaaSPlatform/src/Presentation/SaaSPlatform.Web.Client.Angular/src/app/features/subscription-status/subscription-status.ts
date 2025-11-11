@@ -52,17 +52,20 @@ export class SubscriptionStatusComponent {
   }
 
   badgeClass(status: string | null | undefined): string {
+    const base =
+      'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset';
+
     switch ((status ?? '').toLowerCase()) {
       case 'pending':
-        return 'badge bg-warning text-dark';
+        return `${base} bg-amber-50 text-amber-700 ring-amber-200`;
       case 'approved':
-        return 'badge bg-success';
+        return `${base} bg-emerald-50 text-emerald-700 ring-emerald-200`;
       case 'deployed':
-        return 'badge bg-info text-dark';
+        return `${base} bg-sky-50 text-sky-700 ring-sky-200`;
       case 'rejected':
-        return 'badge bg-danger';
+        return `${base} bg-rose-50 text-rose-700 ring-rose-200`;
       default:
-        return 'badge bg-secondary';
+        return `${base} bg-slate-100 text-slate-600 ring-slate-200`;
     }
   }
 }

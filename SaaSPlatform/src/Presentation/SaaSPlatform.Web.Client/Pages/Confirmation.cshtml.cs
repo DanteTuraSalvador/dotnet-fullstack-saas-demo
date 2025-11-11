@@ -46,6 +46,20 @@ public class ConfirmationModel : PageModel
             }
         }
     }
+
+    public static string GetBadgeClass(string? status)
+    {
+        var baseClass = "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset";
+
+        return status?.ToLowerInvariant() switch
+        {
+            "pending approval" or "pending" => $"{baseClass} bg-amber-50 text-amber-700 ring-amber-200",
+            "approved" => $"{baseClass} bg-emerald-50 text-emerald-700 ring-emerald-200",
+            "deployed" => $"{baseClass} bg-sky-50 text-sky-700 ring-sky-200",
+            "rejected" => $"{baseClass} bg-rose-50 text-rose-700 ring-rose-200",
+            _ => $"{baseClass} bg-slate-100 text-slate-600 ring-slate-200"
+        };
+    }
 }
 
 public class SubscriptionResponse

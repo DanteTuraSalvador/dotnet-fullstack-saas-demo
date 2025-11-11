@@ -1,45 +1,31 @@
-<header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
-    <div class="container">
-      <a class="navbar-brand fw-semibold" routerLink="/request">SaaSPlatform Angular</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#mainNav"
-        aria-controls="mainNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
+<header class="border-b border-slate-100 bg-white/90 backdrop-blur">
+  <div class="page-shell flex h-16 items-center justify-between">
+    <a class="text-lg font-semibold text-slate-900" routerLink="/request">SaaSPlatform Angular</a>
+    <nav class="flex items-center gap-4 text-sm font-medium text-slate-500">
+      <a
+        routerLink="/request"
+        routerLinkActive="text-primary font-semibold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="transition hover:text-primary"
+        >Request Subscription</a
       >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/request"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              >Request Subscription</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/status" routerLinkActive="active">Check Status</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+      <a
+        routerLink="/status"
+        routerLinkActive="text-primary font-semibold"
+        class="transition hover:text-primary"
+        >Check Status</a
+      >
+    </nav>
+  </div>
 </header>
 
-<main class="container py-4">
+<main class="page-shell py-10">
   <router-outlet />
 </main>
 
-<footer class="border-top py-3 text-muted">
-  <div class="container d-flex justify-content-between flex-wrap gap-2 small">
+<footer class="border-t border-slate-100 bg-white/70 py-6 text-sm text-slate-500">
+  <div class="page-shell flex flex-wrap items-center justify-between gap-2">
     <span>&copy; {{ currentYear }} SaaSPlatform</span>
-    <span>Angular Client</span>
+    <span class="font-medium text-slate-600">Angular Client</span>
   </div>
 </footer>

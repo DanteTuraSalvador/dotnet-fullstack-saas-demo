@@ -3,34 +3,39 @@
     ViewData["Title"] = "Client Subscription";
 }
 
-<div class="container">
-    <h1 class="mt-4">Azure SaaS Subscription Request</h1>
-    <p class="lead">Fill out this form to request Azure infrastructure provisioning.</p>
+<div class="mx-auto max-w-3xl space-y-6">
+    <div class="space-y-2 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Azure SaaS</p>
+        <h1 class="section-heading">Subscription Request</h1>
+        <p class="section-subheading">
+            Fill out this form to request Azure infrastructure provisioning for your organization.
+        </p>
+    </div>
 
-    <form asp-action="Index" method="post" class="mt-4">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="text-sm text-rose-600"></div>
 
-        <div class="form-group mb-3">
-            <label asp-for="CompanyName" class="form-label"></label>
-            <input asp-for="CompanyName" class="form-control" />
-            <span asp-validation-for="CompanyName" class="text-danger"></span>
+    <form asp-action="Index" method="post" class="surface-card space-y-5">
+        <div>
+            <label asp-for="CompanyName" class="block text-sm font-semibold text-slate-600"></label>
+            <input asp-for="CompanyName" class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40" />
+            <span asp-validation-for="CompanyName" class="mt-2 block text-sm text-rose-600"></span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="ContactEmail" class="form-label"></label>
-            <input asp-for="ContactEmail" class="form-control" />
-            <span asp-validation-for="ContactEmail" class="text-danger"></span>
+        <div>
+            <label asp-for="ContactEmail" class="block text-sm font-semibold text-slate-600"></label>
+            <input asp-for="ContactEmail" class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40" />
+            <span asp-validation-for="ContactEmail" class="mt-2 block text-sm text-rose-600"></span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="ContactPerson" class="form-label"></label>
-            <input asp-for="ContactPerson" class="form-control" />
-            <span asp-validation-for="ContactPerson" class="text-danger"></span>
+        <div>
+            <label asp-for="ContactPerson" class="block text-sm font-semibold text-slate-600"></label>
+            <input asp-for="ContactPerson" class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40" />
+            <span asp-validation-for="ContactPerson" class="mt-2 block text-sm text-rose-600"></span>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="BusinessType" class="form-label"></label>
-            <select asp-for="BusinessType" class="form-control">
+        <div>
+            <label asp-for="BusinessType" class="block text-sm font-semibold text-slate-600"></label>
+            <select asp-for="BusinessType" class="mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40">
                 <option value="">Select Business Type</option>
                 <option>Technology</option>
                 <option>Finance</option>
@@ -40,11 +45,17 @@
                 <option>Manufacturing</option>
                 <option>Other</option>
             </select>
-            <span asp-validation-for="BusinessType" class="text-danger"></span>
+            <span asp-validation-for="BusinessType" class="mt-2 block text-sm text-rose-600"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Submit Subscription Request</button>
-        <a asp-controller="Status" asp-action="Index" class="btn btn-link mt-3">Check Request Status</a>
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition">
+                Submit Subscription Request
+            </button>
+            <a asp-controller="Status" asp-action="Index" class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary">
+                Check Request Status
+            </a>
+        </div>
     </form>
 </div>
 

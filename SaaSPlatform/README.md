@@ -6,7 +6,7 @@ A comprehensive SaaS platform demonstrating full-stack .NET development capabili
 
 ### Project Timeline: 6 Sprints (11 weeks)
 
-### Current Status: Sprint 1 - Foundation & Core Platform (Completed)
+### Current Status: Sprint 2 - Frontend Modernization & Aspire Orchestration (In Progress)
 
 **Goals:**
 - [x] Create Aspire solution structure
@@ -23,7 +23,7 @@ A comprehensive SaaS platform demonstrating full-stack .NET development capabili
 - [x] Database with ClientSubscription model
 - [x] REST API endpoints
 - [x] Frontend-to-API integration
-- [x] Basic Bootstrap UI
+- [x] Unified Tailwind UI across every frontend (Angular, React, Blazor, Razor, MVC, Admin portals)
 
 ## 🚀 Project Overview
 
@@ -90,6 +90,11 @@ SaaSPlatform.sln
 - **Blazor WebAssembly** - .NET-based SPA consuming the shared API
 - **Clean Architecture** - Proper separation of concerns
 
+### UI Styling & Components
+- **Tailwind CSS 3.4** powers every frontend (Angular, React, Blazor, Razor, MVC, Admin) for a consistent system
+- Custom utility classes (`.page-shell`, `.surface-card`, etc.) live in each app’s global stylesheet for shared spacing/typography
+- Bootstrap assets have been removed; if you see stale files locally, clear `bin/obj` and re-run Aspire
+
 ### DevOps & Observability
 - **.NET Aspire** - Application orchestration
 - **Health Checks** - ASP.NET Core health monitoring
@@ -108,29 +113,34 @@ SaaSPlatform.sln
 # Navigate to the project directory
 cd SaaSPlatform
 
-# Restore dependencies
+# Restore .NET workloads
 dotnet restore
 
-# Update database
-dotnet ef database update --project src/Infrastructure/SaaSPlatform.Infrastructure --startup-project src/Api/SaaSPlatform.Api
+# Install SPA dependencies (first run only)
+cd src/Presentation/SaaSPlatform.Web.Client.Angular && npm install
+cd ../SaaSPlatform.Web.Client.React && npm install
+cd ../../../..  # back to the repo root
 
-# Run the API
-dotnet run --project src/Api/SaaSPlatform.Api
+# Apply the latest migrations
+dotnet ef database update \
+  --project src/Infrastructure/SaaSPlatform.Infrastructure \
+  --startup-project src/Api/SaaSPlatform.Api
 
-# In a separate terminal, run the Client Web
-dotnet run --project src/Presentation/SaaSPlatform.Web.Client
-
-# In another terminal, run the Admin Web
-dotnet run --project src/Presentation/SaaSPlatform.Web.Admin
+# Launch the entire distributed app (Aspire orchestrates API + frontends)
+dotnet run --project SaaSPlatform.AppHost/SaaSPlatform.AppHost.csproj
 ```
+
+When the Aspire dashboard opens, use it to reach each frontend (Angular, React, Blazor, Razor, MVC, Admin).  
+Aspire automatically runs the SPA dev servers via the included PowerShell scripts, so hot reload works out of the box.
 
 ### Angular Client (SPA)
 ```bash
 cd src/Presentation/SaaSPlatform.Web.Client.Angular
-npm install          # first run
-npm start            # serves on http://localhost:4200
+npm install                      # first run
+npm start                        # serves on http://localhost:4200
 ```
-The Angular app calls the shared API at `http://localhost:5153`. Update the values in `src/environments/environment*.ts` if your API runs elsewhere.
+The Angular app calls the shared API at `https://localhost:7264` by default (see `src/environments/environment*.ts`).
+Aspire auto-starts it via `run-angular.ps1`, but you can still run it manually for focused SPA work.
 
 ### React Client (SPA)
 ```bash

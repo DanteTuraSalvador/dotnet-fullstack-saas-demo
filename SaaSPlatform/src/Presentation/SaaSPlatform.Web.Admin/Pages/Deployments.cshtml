@@ -4,84 +4,89 @@
     ViewData["Title"] = "Azure Deployments";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Azure Deployments</h1>
-    <p class="lead">Monitor and manage Azure resource deployments.</p>
-    
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Active Deployments</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Company</th>
-                            <th>Resources</th>
-                            <th>Deployment Date</th>
-                            <th>Status</th>
-                            <th>Resource Group</th>
-                            <th>Actions</th>
+<div class="space-y-6">
+    <div class="space-y-2">
+        <p class="text-sm font-semibold uppercase tracking-wide text-primary">Azure deployments</p>
+        <h1 class="text-3xl font-semibold text-slate-900">Deployment Overview</h1>
+        <p class="section-subheading">Monitor active Azure resource groups and review recent automation logs.</p>
+    </div>
+
+    <div class="space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900">Active Deployments</h2>
+        <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+            <table class="min-w-full divide-y divide-slate-100 text-sm">
+                <thead class="bg-slate-50 text-left font-semibold text-slate-600">
+                    <tr>
+                        <th class="px-6 py-3">Company</th>
+                        <th class="px-6 py-3">Resources</th>
+                        <th class="px-6 py-3">Deployment Date</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3">Resource Group</th>
+                        <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    @foreach (var deployment in Model.Deployments)
+                    {
+                        <tr class="text-slate-700">
+                            <td class="px-6 py-4 font-semibold text-slate-900">@deployment.CompanyName</td>
+                            <td class="px-6 py-4">App Service, SQL DB</td>
+                            <td class="px-6 py-4">@deployment.CreatedDate.ToString("yyyy-MM-dd")</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">Completed</span>
+                            </td>
+                            <td class="px-6 py-4">@deployment.AzureResourceGroup</td>
+                            <td class="px-6 py-4 text-right">
+                                <button type="button" class="inline-flex items-center rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-primary hover:text-primary" disabled>
+                                    View Resources
+                                </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var deployment in Model.Deployments)
-                        {
-                            <tr>
-                                <td>@deployment.CompanyName</td>
-                                <td>App Service, SQL DB</td>
-                                <td>@deployment.CreatedDate.ToString("yyyy-MM-dd")</td>
-                                <td><span class="badge badge-success">Completed</span></td>
-                                <td>@deployment.AzureResourceGroup</td>
-                                <td>
-                                    <button class="btn btn-info btn-sm">View Resources</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-    
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Deployment Logs</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="logTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>Deployment</th>
-                            <th>Message</th>
-                            <th>Level</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>2025-11-04 14:30:22</td>
-                            <td>Health Plus LLC</td>
-                            <td>Creating resource group rg-healthplus-20251104</td>
-                            <td><span class="badge badge-info">Info</span></td>
-                        </tr>
-                        <tr>
-                            <td>2025-11-04 14:31:15</td>
-                            <td>Health Plus LLC</td>
-                            <td>Deploying App Service plan</td>
-                            <td><span class="badge badge-info">Info</span></td>
-                        </tr>
-                        <tr>
-                            <td>2025-11-04 14:35:42</td>
-                            <td>Health Plus LLC</td>
-                            <td>Deployment completed successfully</td>
-                            <td><span class="badge badge-success">Success</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+
+    <div class="space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900">Deployment Logs</h2>
+        <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+            <table class="min-w-full divide-y divide-slate-100 text-sm">
+                <thead class="bg-slate-50 text-left font-semibold text-slate-600">
+                    <tr>
+                        <th class="px-6 py-3">Timestamp</th>
+                        <th class="px-6 py-3">Deployment</th>
+                        <th class="px-6 py-3">Message</th>
+                        <th class="px-6 py-3">Level</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    <tr>
+                        <td class="px-6 py-4">2025-11-04 14:30:22</td>
+                        <td class="px-6 py-4">Health Plus LLC</td>
+                        <td class="px-6 py-4">Creating resource group rg-healthplus-20251104</td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-200">Info</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4">2025-11-04 14:31:15</td>
+                        <td class="px-6 py-4">Health Plus LLC</td>
+                        <td class="px-6 py-4">Deploying App Service plan</td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-200">Info</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4">2025-11-04 14:35:42</td>
+                        <td class="px-6 py-4">Health Plus LLC</td>
+                        <td class="px-6 py-4">Deployment completed successfully</td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">Success</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

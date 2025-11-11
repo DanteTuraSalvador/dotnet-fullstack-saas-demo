@@ -1,22 +1,27 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 min-h-screen font-sans text-slate-900 antialiased;
+  }
 }
 
-.navbar-brand {
-  font-weight: 600;
-}
+@layer components {
+  .page-shell {
+    @apply mx-auto max-w-5xl px-4 sm:px-6 lg:px-8;
+  }
 
-.nav-link.active {
-  font-weight: 600;
-}
+  .surface-card {
+    @apply rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-xl shadow-slate-900/5 backdrop-blur;
+  }
 
-main {
-  min-height: calc(100vh - 160px);
-}
+  .section-heading {
+    @apply text-3xl font-semibold text-slate-900;
+  }
 
-.card {
-  border: none;
-  border-radius: 0.5rem;
+  .section-subheading {
+    @apply text-base text-slate-500;
+  }
 }

@@ -5,49 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SaaSPlatform.Web.Client</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SaaSPlatform.Web.Client.styles.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#2563eb',
+                            foreground: '#ffffff'
+                        },
+                        slate: {
+                            950: '#020617'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["'Segoe UI'", 'Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">SaaSPlatform.Web.Client</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Request Subscription</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Status">Check Status</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+<body class="bg-slate-50 font-sans text-slate-900 antialiased">
+    <div class="min-h-screen">
+        <header class="border-b border-slate-100 bg-white/90 backdrop-blur">
+            <div class="page-shell flex h-16 items-center justify-between">
+                <a class="text-lg font-semibold text-slate-900" asp-area="" asp-page="/Index">SaaSPlatform Razor</a>
+                <nav class="flex items-center gap-4 text-sm font-medium">
+                    <a class="text-slate-500 transition hover:text-primary" asp-area="" asp-page="/Index">Request Subscription</a>
+                    <a class="text-slate-500 transition hover:text-primary" asp-area="" asp-page="/Status">Check Status</a>
+                    <a class="text-slate-500 transition hover:text-primary" asp-area="" asp-page="/Privacy">Privacy</a>
+                </nav>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </header>
+
+        <main role="main" class="page-shell py-10 min-h-[60vh]">
             @RenderBody()
         </main>
+
+        <footer class="border-t border-slate-100 bg-white/70 py-6 text-sm text-slate-500">
+            <div class="page-shell flex flex-wrap items-center justify-between gap-2">
+                <span>&copy; @DateTime.Now.Year SaaSPlatform</span>
+                <a class="font-medium text-slate-600 hover:text-primary" asp-area="" asp-page="/Privacy">Privacy</a>
+            </div>
+        </footer>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - SaaSPlatform.Web.Client - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

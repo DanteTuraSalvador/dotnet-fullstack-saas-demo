@@ -4,84 +4,103 @@
     ViewData["Title"] = "Manage Subscriptions";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Manage Subscriptions</h1>
-    <p class="lead">Review and manage client subscription requests.</p>
-    
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Subscription Requests</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Company</th>
-                            <th>Contact</th>
-                            <th>Business Type</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var subscription in Model.Subscriptions)
-                        {
-                            <tr>
-                                <td>@subscription.CompanyName</td>
-                                <td>@subscription.ContactEmail</td>
-                                <td>@subscription.BusinessType</td>
-                                <td>@subscription.CreatedDate.ToString("yyyy-MM-dd")</td>
-                                <td>
-                                    @if (subscription.Status == "Pending")
-                                    {
-                                        <span class="badge badge-warning">Pending</span>
-                                    }
-                                    else if (subscription.Status == "Approved")
-                                    {
-                                        <span class="badge badge-success">Approved</span>
-                                    }
-                                    else if (subscription.Status == "Deployed")
-                                    {
-                                        <span class="badge badge-info">Deployed</span>
-                                    }
-                                    else if (subscription.Status == "Rejected")
-                                    {
-                                        <span class="badge badge-danger">Rejected</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (subscription.Status == "Pending")
-                                    {
-                                        <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="d-inline">
-                                            <input type="hidden" name="id" value="@subscription.Id" />
-                                            <input type="hidden" name="status" value="Approved" />
-                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                                        </form>
-                                        <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="d-inline">
-                                            <input type="hidden" name="id" value="@subscription.Id" />
-                                            <input type="hidden" name="status" value="Rejected" />
-                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                                        </form>
-                                    }
-                                    else if (subscription.Status == "Approved")
-                                    {
-                                        <form method="post" asp-page-handler="Deploy" asp-antiforgery="true" class="d-inline">
-                                            <input type="hidden" name="id" value="@subscription.Id" />
-                                            <button type="submit" class="btn btn-info btn-sm">Deploy</button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">No actions</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="space-y-6">
+    <div class="space-y-2">
+        <p class="text-sm font-semibold uppercase tracking-wide text-primary">Operations</p>
+        <h1 class="text-3xl font-semibold text-slate-900">Manage Subscriptions</h1>
+        <p class="section-subheading">Review and govern every client subscription request.</p>
+    </div>
+
+    <div class="space-y-3">
+        @if (TempData["Success"] is string successMessage)
+        {
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 text-emerald-700">
+                @successMessage
             </div>
-        </div>
+        }
+        @if (TempData["Error"] is string errorMessage)
+        {
+            <div class="rounded-2xl border border-rose-200 bg-rose-50/80 p-4 text-rose-700">
+                @errorMessage
+            </div>
+        }
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+        <table class="min-w-full divide-y divide-slate-100 text-sm">
+            <thead class="bg-slate-50 text-left font-semibold text-slate-600">
+                <tr>
+                    <th class="px-6 py-3">Company</th>
+                    <th class="px-6 py-3">Contact</th>
+                    <th class="px-6 py-3">Business Type</th>
+                    <th class="px-6 py-3">Submitted</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 bg-white">
+                @foreach (var subscription in Model.Subscriptions)
+                {
+                    <tr class="text-slate-700">
+                        <td class="px-6 py-4 font-semibold text-slate-900">@subscription.CompanyName</td>
+                        <td class="px-6 py-4">@subscription.ContactEmail</td>
+                        <td class="px-6 py-4">@subscription.BusinessType</td>
+                        <td class="px-6 py-4">@subscription.CreatedDate.ToString("yyyy-MM-dd")</td>
+                        <td class="px-6 py-4">
+                            <span class="@GetBadgeClass(subscription.Status)">@subscription.Status</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex justify-end gap-2">
+                                @if (subscription.Status == "Pending")
+                                {
+                                    <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="inline-flex">
+                                        <input type="hidden" name="id" value="@subscription.Id" />
+                                        <input type="hidden" name="status" value="Approved" />
+                                        <button type="submit" class="inline-flex items-center rounded-xl bg-emerald-500/90 px-3 py-2 text-xs font-semibold text-white shadow hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form method="post" asp-page-handler="UpdateStatus" asp-antiforgery="true" class="inline-flex">
+                                        <input type="hidden" name="id" value="@subscription.Id" />
+                                        <input type="hidden" name="status" value="Rejected" />
+                                        <button type="submit" class="inline-flex items-center rounded-xl bg-rose-500/90 px-3 py-2 text-xs font-semibold text-white shadow hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600">
+                                            Reject
+                                        </button>
+                                    </form>
+                                }
+                                else if (subscription.Status == "Approved")
+                                {
+                                    <form method="post" asp-page-handler="Deploy" asp-antiforgery="true" class="inline-flex">
+                                        <input type="hidden" name="id" value="@subscription.Id" />
+                                        <button type="submit" class="inline-flex items-center rounded-xl bg-sky-500/90 px-3 py-2 text-xs font-semibold text-white shadow hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
+                                            Deploy
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-sm text-slate-400">No actions</span>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+
+@functions {
+    string GetBadgeClass(string? status)
+    {
+        const string baseClass = "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset";
+        return status switch
+        {
+            "Pending" => $"{baseClass} bg-amber-50 text-amber-700 ring-amber-200",
+            "Approved" => $"{baseClass} bg-emerald-50 text-emerald-700 ring-emerald-200",
+            "Deployed" => $"{baseClass} bg-sky-50 text-sky-700 ring-sky-200",
+            "Rejected" => $"{baseClass} bg-rose-50 text-rose-700 ring-rose-200",
+            _ => $"{baseClass} bg-slate-100 text-slate-600 ring-slate-200"
+        };
+    }
+}

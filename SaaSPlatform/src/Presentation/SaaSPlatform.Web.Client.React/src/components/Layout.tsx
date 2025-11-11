@@ -2,49 +2,40 @@ import type { PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 
 export function Layout({ children }: PropsWithChildren) {
+  const navClass = ({ isActive }: { isActive: boolean }) =>
+    [
+      'text-sm font-medium transition hover:text-primary',
+      isActive ? 'text-primary font-semibold' : 'text-slate-500'
+    ].join(' ');
+
   return (
-    <div className="d-flex flex-column min-vh-100">
-      <header className="border-bottom bg-white shadow-sm">
-        <nav className="navbar navbar-expand-lg navbar-light container">
-          <NavLink className="navbar-brand fw-semibold" to="/">
-            SaaSPlatform React
-          </NavLink>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainNav"
-            aria-controls="mainNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="mainNav">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <NavLink to="/" className="nav-link" end>
-                  Request Subscription
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/status" className="nav-link">
-                  Check Status
-                </NavLink>
-              </li>
-            </ul>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="flex min-h-screen flex-col">
+        <header className="border-b border-slate-100 bg-white/90 backdrop-blur">
+          <div className="page-shell flex h-16 items-center justify-between">
+            <NavLink to="/" className="text-lg font-semibold text-slate-900">
+              SaaSPlatform React
+            </NavLink>
+            <nav className="flex items-center gap-4">
+              <NavLink to="/" className={navClass} end>
+                Request Subscription
+              </NavLink>
+              <NavLink to="/status" className={navClass}>
+                Check Status
+              </NavLink>
+            </nav>
           </div>
-        </nav>
-      </header>
+        </header>
 
-      <main className="container py-4 flex-grow-1">{children}</main>
+        <main className="page-shell flex-1 py-10">{children}</main>
 
-      <footer className="border-top py-3 text-muted bg-white">
-        <div className="container d-flex justify-content-between small flex-wrap gap-2">
-          <span>&copy; {new Date().getFullYear()} SaaSPlatform</span>
-          <span>React Client</span>
-        </div>
-      </footer>
+        <footer className="border-t border-slate-100 bg-white/70 py-6 text-sm text-slate-500">
+          <div className="page-shell flex flex-wrap items-center justify-between gap-2">
+            <span>&copy; {new Date().getFullYear()} SaaSPlatform</span>
+            <span className="font-medium text-slate-600">React Client</span>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

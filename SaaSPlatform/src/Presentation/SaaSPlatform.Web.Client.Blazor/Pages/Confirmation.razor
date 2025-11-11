@@ -5,46 +5,77 @@
 @inject SubmissionSummaryState SummaryState
 @inject NavigationManager NavigationManager
 
-<div class="row justify-content-center">
-    <div class="col-xl-7">
-        <div class="alert alert-success shadow-sm" role="alert">
-            <h2 class="alert-heading">Thank you!</h2>
-            <p>Your Azure SaaS subscription request has been successfully submitted.</p>
-            <p class="mb-0">An administrator will review your request and contact you shortly.</p>
-        </div>
+<div class="mx-auto max-w-3xl space-y-6">
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6 text-emerald-900 shadow-inner">
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">Submission received</p>
+        <h1 class="mt-2 text-3xl font-semibold text-emerald-900">Thank you!</h1>
+        <p class="mt-3 text-emerald-800">
+            Your Azure SaaS subscription request has been successfully submitted. An administrator will review your request and contact you shortly.
+        </p>
+    </div>
 
-        @if (SummaryState.LatestSummary is not null)
-        {
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">Request Details</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Company Name:</strong> @SummaryState.LatestSummary.CompanyName</p>
-                    <p><strong>Contact Email:</strong> @SummaryState.LatestSummary.ContactEmail</p>
-                    <p><strong>Contact Person:</strong> @SummaryState.LatestSummary.ContactPerson</p>
-                    <p><strong>Business Type:</strong> @SummaryState.LatestSummary.BusinessType</p>
-                    <p>
-                        <strong>Status:</strong>
-                        <span class="badge bg-warning text-dark">@SummaryState.LatestSummary.Status</span>
-                    </p>
-                </div>
+    @if (SummaryState.LatestSummary is not null)
+    {
+        <div class="surface-card space-y-6">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-wide text-primary">Request details</p>
+                <h2 class="text-2xl font-semibold text-slate-900">Submission summary</h2>
             </div>
-        }
-        else
-        {
-            <div class="alert alert-info">
-                We could not load the request details. Please submit a new request to view the summary again.
-            </div>
-        }
-
-        <div class="d-flex gap-3 mt-4 flex-wrap">
-            <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo(string.Empty, true)'>
-                Submit Another Request
-            </button>
-            <button class="btn btn-outline-secondary" @onclick='() => NavigationManager.NavigateTo("/status", true)'>
-                Check Request Status
-            </button>
+            <dl class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-slate-50/80 p-4">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Company Name</dt>
+                    <dd class="mt-2 text-base font-semibold text-slate-900">@SummaryState.LatestSummary.CompanyName</dd>
+                </div>
+                <div class="rounded-2xl bg-slate-50/80 p-4">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contact Email</dt>
+                    <dd class="mt-2 text-base font-semibold text-slate-900">@SummaryState.LatestSummary.ContactEmail</dd>
+                </div>
+                <div class="rounded-2xl bg-slate-50/80 p-4">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contact Person</dt>
+                    <dd class="mt-2 text-base font-semibold text-slate-900">@SummaryState.LatestSummary.ContactPerson</dd>
+                </div>
+                <div class="rounded-2xl bg-slate-50/80 p-4">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Business Type</dt>
+                    <dd class="mt-2 text-base font-semibold text-slate-900">@SummaryState.LatestSummary.BusinessType</dd>
+                </div>
+                <div class="rounded-2xl bg-slate-50/80 p-4 sm:col-span-2">
+                    <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</dt>
+                    <dd class="mt-3">
+                        <span class="@GetBadgeClass(SummaryState.LatestSummary.Status)">@SummaryState.LatestSummary.Status</span>
+                    </dd>
+                </div>
+            </dl>
         </div>
+    }
+    else
+    {
+        <div class="rounded-2xl border border-slate-200 bg-white/80 p-5 text-slate-700">
+            We could not load the request details. Please submit a new request to view the summary again.
+        </div>
+    }
+
+    <div class="flex flex-wrap gap-3">
+        <button class="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition hover:-translate-y-0.5" @onclick='() => NavigationManager.NavigateTo(string.Empty, true)'>
+            Submit Another Request
+        </button>
+        <button class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary" @onclick='() => NavigationManager.NavigateTo("/status", true)'>
+            Check Request Status
+        </button>
     </div>
 </div>
+
+@code {
+    private static string GetBadgeClass(string status)
+    {
+        var baseClass = "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset";
+
+        return status?.ToLowerInvariant() switch
+        {
+            "pending approval" or "pending" => $"{baseClass} bg-amber-50 text-amber-700 ring-amber-200",
+            "approved" => $"{baseClass} bg-emerald-50 text-emerald-700 ring-emerald-200",
+            "deployed" => $"{baseClass} bg-sky-50 text-sky-700 ring-sky-200",
+            "rejected" => $"{baseClass} bg-rose-50 text-rose-700 ring-rose-200",
+            _ => $"{baseClass} bg-slate-100 text-slate-600 ring-slate-200"
+        };
+    }
+}

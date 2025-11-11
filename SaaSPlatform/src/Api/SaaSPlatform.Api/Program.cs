@@ -35,7 +35,11 @@ public partial class Program
                         "http://localhost:44300",
                         "https://localhost:44300",
                         "http://localhost:44400",
-                        "https://localhost:44400")
+                        "https://localhost:44400",
+                        "http://localhost:4500",
+                        "https://localhost:4500",
+                        "http://localhost:44500",
+                        "https://localhost:44500")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

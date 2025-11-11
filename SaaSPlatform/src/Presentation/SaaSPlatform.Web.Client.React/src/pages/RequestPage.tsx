@@ -28,16 +28,23 @@ export function RequestPage() {
   const [form, setForm] = useState<CreateSubscriptionRequest>(initialForm);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   const navigate = useNavigate();
 
   const updateField = (field: keyof CreateSubscriptionRequest, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+    setShowValidation(false);
+    setError(null);
   };
+
+  const fieldInvalid = (field: keyof CreateSubscriptionRequest) =>
+    showValidation && !form[field].trim();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     if (!form.companyName || !form.contactEmail || !form.contactPerson || !form.businessType) {
+      setShowValidation(true);
       setError('Please complete all required fields.');
       return;
     }
@@ -53,6 +60,7 @@ export function RequestPage() {
       };
       navigate('/confirmation', { state: { summary } });
       setForm(initialForm);
+      setShowValidation(false);
     } catch (err) {
       setError('Unable to submit your request right now. Please try again later.');
     } finally {
@@ -60,98 +68,129 @@ export function RequestPage() {
     }
   };
 
+  const inputBaseClass =
+    'mt-1 block w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-slate-900 shadow-sm transition focus:border-primary focus:ring-2 focus:ring-primary/40';
+
   return (
-    <div className="row justify-content-center">
-      <div className="col-xl-8">
-        <h1 className="mt-2">Azure SaaS Subscription Request</h1>
-        <p className="lead text-muted">
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div className="space-y-2 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+          Azure SaaS
+        </p>
+        <h1 className="section-heading">Subscription Request</h1>
+        <p className="section-subheading">
           Fill out this form to request Azure infrastructure provisioning for your organization.
         </p>
+      </div>
 
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
-
-        <div className="card shadow-sm">
-          <div className="card-body p-4">
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="companyName">
-                  Company Name
-                </label>
-                <input
-                  id="companyName"
-                  type="text"
-                  className="form-control"
-                  value={form.companyName}
-                  onChange={(e) => updateField('companyName', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label" htmlFor="contactEmail">
-                  Contact Email
-                </label>
-                <input
-                  id="contactEmail"
-                  type="email"
-                  className="form-control"
-                  value={form.contactEmail}
-                  onChange={(e) => updateField('contactEmail', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label" htmlFor="contactPerson">
-                  Contact Person
-                </label>
-                <input
-                  id="contactPerson"
-                  type="text"
-                  className="form-control"
-                  value={form.contactPerson}
-                  onChange={(e) => updateField('contactPerson', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="form-label" htmlFor="businessType">
-                  Business Type
-                </label>
-                <select
-                  id="businessType"
-                  className="form-select"
-                  value={form.businessType}
-                  onChange={(e) => updateField('businessType', e.target.value)}
-                  required
-                >
-                  <option value="">Select business type</option>
-                  {businessTypes.map((type) => (
-                    <option key={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="d-flex gap-3 flex-wrap">
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Subscription Request'}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => navigate('/status')}
-                >
-                  Check Request Status
-                </button>
-              </div>
-            </form>
-          </div>
+      {error && (
+        <div className="rounded-2xl border border-rose-200 bg-rose-50/80 p-4 text-rose-700">
+          {error}
         </div>
+      )}
+
+      <div className="surface-card">
+        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+          <div>
+            <label className="block text-sm font-semibold text-slate-600" htmlFor="companyName">
+              Company Name
+            </label>
+            <input
+              id="companyName"
+              type="text"
+              className={`${inputBaseClass} ${
+                fieldInvalid('companyName') ? 'border-rose-400 ring-rose-200' : ''
+              }`}
+              value={form.companyName}
+              onChange={(e) => updateField('companyName', e.target.value)}
+              required
+            />
+            {fieldInvalid('companyName') && (
+              <p className="mt-2 text-sm text-rose-600">Company name is required.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-600" htmlFor="contactEmail">
+              Contact Email
+            </label>
+            <input
+              id="contactEmail"
+              type="email"
+              className={`${inputBaseClass} ${
+                fieldInvalid('contactEmail') ? 'border-rose-400 ring-rose-200' : ''
+              }`}
+              value={form.contactEmail}
+              onChange={(e) => updateField('contactEmail', e.target.value)}
+              required
+            />
+            {fieldInvalid('contactEmail') && (
+              <p className="mt-2 text-sm text-rose-600">Contact email is required.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-600" htmlFor="contactPerson">
+              Contact Person
+            </label>
+            <input
+              id="contactPerson"
+              type="text"
+              className={`${inputBaseClass} ${
+                fieldInvalid('contactPerson') ? 'border-rose-400 ring-rose-200' : ''
+              }`}
+              value={form.contactPerson}
+              onChange={(e) => updateField('contactPerson', e.target.value)}
+              required
+            />
+            {fieldInvalid('contactPerson') && (
+              <p className="mt-2 text-sm text-rose-600">Contact person is required.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-600" htmlFor="businessType">
+              Business Type
+            </label>
+            <select
+              id="businessType"
+              className={`${inputBaseClass} ${
+                fieldInvalid('businessType') ? 'border-rose-400 ring-rose-200' : ''
+              }`}
+              value={form.businessType}
+              onChange={(e) => updateField('businessType', e.target.value)}
+              required
+            >
+              <option value="">Select business type</option>
+              {businessTypes.map((type) => (
+                <option key={type}>{type}</option>
+              ))}
+            </select>
+            {fieldInvalid('businessType') && (
+              <p className="mt-2 text-sm text-rose-600">Please select a business type.</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition disabled:opacity-60"
+              disabled={submitting}
+            >
+              {submitting && (
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+              Submit Subscription Request
+            </button>
+            <button
+              type="button"
+              className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary"
+              onClick={() => navigate('/status')}
+            >
+              Check Request Status
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -1,19 +1,27 @@
-@use "bootstrap/scss/bootstrap";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+@layer base {
+  body {
+    @apply bg-slate-50 min-h-screen font-sans text-slate-900 antialiased;
+  }
 }
 
-.navbar-brand {
-  font-weight: 600;
-}
+@layer components {
+  .page-shell {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 
-.nav-link.active {
-  font-weight: 600;
-}
+  .surface-card {
+    @apply rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-xl shadow-slate-900/5;
+  }
 
-.card {
-  border-radius: 0.5rem;
+  .section-heading {
+    @apply text-3xl font-semibold text-slate-900;
+  }
+
+  .section-subheading {
+    @apply text-base text-slate-500;
+  }
 }

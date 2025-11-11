@@ -3,30 +3,66 @@
     ViewData["Title"] = "Subscription Confirmation";
 }
 
-<div class="container">
-    <h1 class="mt-4">Subscription Request Submitted</h1>
-    <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Thank you!</h4>
-        <p>@Model.SuccessMessage</p>
-        <hr>
-        <p class="mb-0">An administrator will review your request and contact you shortly.</p>
+@functions {
+    string GetBadge(string? status)
+    {
+        const string baseClass = "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset";
+        return status switch
+        {
+            "Pending" => $"{baseClass} bg-amber-50 text-amber-700 ring-amber-200",
+            "Approved" => $"{baseClass} bg-emerald-50 text-emerald-700 ring-emerald-200",
+            "Deployed" => $"{baseClass} bg-sky-50 text-sky-700 ring-sky-200",
+            "Rejected" => $"{baseClass} bg-rose-50 text-rose-700 ring-rose-200",
+            _ => $"{baseClass} bg-slate-100 text-slate-600 ring-slate-200"
+        };
+    }
+}
+
+<div class="mx-auto max-w-3xl space-y-6">
+    <div class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6 text-emerald-900 shadow-inner">
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">Submission received</p>
+        <h1 class="mt-2 text-3xl font-semibold text-emerald-900">Thank you!</h1>
+        <p class="mt-3 text-emerald-800">@Model.SuccessMessage</p>
+        <p class="text-emerald-800">An administrator will review your request and contact you shortly.</p>
     </div>
 
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5>Request Details</h5>
+    <div class="surface-card space-y-6">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-primary">Request details</p>
+            <h2 class="text-2xl font-semibold text-slate-900">Submission summary</h2>
         </div>
-        <div class="card-body">
-            <p><strong>Company Name:</strong> @Model.CompanyName</p>
-            <p><strong>Contact Email:</strong> @Model.ContactEmail</p>
-            <p><strong>Contact Person:</strong> @Model.ContactPerson</p>
-            <p><strong>Business Type:</strong> @Model.BusinessType</p>
-            <p><strong>Status:</strong> <span class="badge badge-warning">@Model.Status</span></p>
-        </div>
+        <dl class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl bg-slate-50/80 p-4">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Company Name</dt>
+                <dd class="mt-2 text-base font-semibold text-slate-900">@Model.CompanyName</dd>
+            </div>
+            <div class="rounded-2xl bg-slate-50/80 p-4">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contact Email</dt>
+                <dd class="mt-2 text-base font-semibold text-slate-900">@Model.ContactEmail</dd>
+            </div>
+            <div class="rounded-2xl bg-slate-50/80 p-4">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contact Person</dt>
+                <dd class="mt-2 text-base font-semibold text-slate-900">@Model.ContactPerson</dd>
+            </div>
+            <div class="rounded-2xl bg-slate-50/80 p-4">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Business Type</dt>
+                <dd class="mt-2 text-base font-semibold text-slate-900">@Model.BusinessType</dd>
+            </div>
+            <div class="rounded-2xl bg-slate-50/80 p-4 sm:col-span-2">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</dt>
+                <dd class="mt-3">
+                    <span class="@GetBadge(Model.Status)">@Model.Status</span>
+                </dd>
+            </div>
+        </dl>
     </div>
 
-    <div class="mt-4">
-        <a asp-action="Index" class="btn btn-primary">Submit Another Request</a>
-        <a asp-controller="Status" asp-action="Index" asp-route-email="@Model.ContactEmail" class="btn btn-secondary">Check Request Status</a>
+    <div class="flex flex-wrap gap-3">
+        <a asp-action="Index" class="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition hover:-translate-y-0.5">
+            Submit Another Request
+        </a>
+        <a asp-controller="Status" asp-action="Index" asp-route-email="@Model.ContactEmail" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:border-primary hover:text-primary">
+            Check Request Status
+        </a>
     </div>
 </div>

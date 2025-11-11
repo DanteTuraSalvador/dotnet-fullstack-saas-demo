@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SaaSPlatform.Application.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json;
 
@@ -18,15 +19,19 @@ public class IndexModel : PageModel
     }
 
     [BindProperty]
+    [Required]
     public string CompanyName { get; set; } = string.Empty;
 
     [BindProperty]
+    [Required, EmailAddress]
     public string ContactEmail { get; set; } = string.Empty;
 
     [BindProperty]
+    [Required]
     public string ContactPerson { get; set; } = string.Empty;
 
     [BindProperty]
+    [Required]
     public string BusinessType { get; set; } = string.Empty;
 
     public void OnGet()

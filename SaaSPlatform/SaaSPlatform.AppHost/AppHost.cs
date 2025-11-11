@@ -31,4 +31,12 @@ builder.AddExecutable("client-react", "pwsh", "-NoLogo", "-File", "./run-react.p
     .WithHttpEndpoint(port: 44400, targetPort: 4400)
     .WithReference(api);
 
+var blazorWorkingDirectory = Path.Combine("..", "src", "Presentation", "SaaSPlatform.Web.Client.Blazor");
+
+builder.AddExecutable("client-blazor", "pwsh", "-NoLogo", "-File", "./run-blazor.ps1",
+        "-Port", "4500", "-ListenHost", "0.0.0.0", "-ApiBaseUrl", "https://localhost:7264")
+    .WithWorkingDirectory(blazorWorkingDirectory)
+    .WithHttpEndpoint(port: 44500, targetPort: 4500)
+    .WithReference(api);
+
 builder.Build().Run();
