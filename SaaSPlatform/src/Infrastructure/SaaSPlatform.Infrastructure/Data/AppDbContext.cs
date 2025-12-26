@@ -24,9 +24,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.Property(e => e.ContactEmail).IsRequired().HasMaxLength(200);
             entity.Property(e => e.ContactPerson).IsRequired().HasMaxLength(200);
             entity.Property(e => e.BusinessType).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.SubscriptionStatus).HasConversion<string>();
+            entity.Property(e => e.SubscriptionTier).HasConversion<string>();
             entity.Property(e => e.AzureResourceGroup).HasMaxLength(200);
-            entity.Property(e => e.WebAppUrl).HasMaxLength(500);
+            entity.Property(e => e.DeploymentUrl).HasMaxLength(500);
         });
 
         // Configure Identity tables with custom names (optional)

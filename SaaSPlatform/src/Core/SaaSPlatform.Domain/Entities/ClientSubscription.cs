@@ -8,15 +8,27 @@ public class ClientSubscription
     public required string ContactPerson { get; set; }
     public required string BusinessType { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public SubscriptionStatus Status { get; set; } = SubscriptionStatus.Pending;
+    public SubscriptionStatus SubscriptionStatus { get; set; } = SubscriptionStatus.Pending;
+    public SubscriptionTier SubscriptionTier { get; set; } = SubscriptionTier.Basic;
     public string? AzureResourceGroup { get; set; }
-    public string? WebAppUrl { get; set; }
+    public string? DeploymentUrl { get; set; }
 }
 
 public enum SubscriptionStatus
 {
     Pending,
     Approved,
-    Deployed,
-    Rejected
+    Provisioning,
+    Active,
+    Failed,
+    Suspended,
+    Cancelled
+}
+
+public enum SubscriptionTier
+{
+    Basic,
+    Standard,
+    Premium,
+    Enterprise
 }

@@ -29,15 +29,19 @@ public class ClientSubscriptionTests
         subscription.ContactEmail.Should().Be(contactEmail);
         subscription.ContactPerson.Should().Be(contactPerson);
         subscription.BusinessType.Should().Be(businessType);
-        subscription.Status.Should().Be(SubscriptionStatus.Pending);
+        subscription.SubscriptionStatus.Should().Be(SubscriptionStatus.Pending);
+        subscription.SubscriptionTier.Should().Be(SubscriptionTier.Basic);
         subscription.CreatedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
     }
 
     [Theory]
     [InlineData("Pending", SubscriptionStatus.Pending)]
     [InlineData("Approved", SubscriptionStatus.Approved)]
-    [InlineData("Deployed", SubscriptionStatus.Deployed)]
-    [InlineData("Rejected", SubscriptionStatus.Rejected)]
+    [InlineData("Provisioning", SubscriptionStatus.Provisioning)]
+    [InlineData("Active", SubscriptionStatus.Active)]
+    [InlineData("Failed", SubscriptionStatus.Failed)]
+    [InlineData("Suspended", SubscriptionStatus.Suspended)]
+    [InlineData("Cancelled", SubscriptionStatus.Cancelled)]
     public void SubscriptionStatus_Should_Parse_Correctly(string statusString, SubscriptionStatus expectedStatus)
     {
         // Act
@@ -45,5 +49,19 @@ public class ClientSubscriptionTests
 
         // Assert
         status.Should().Be(expectedStatus);
+    }
+
+    [Theory]
+    [InlineData("Basic", SubscriptionTier.Basic)]
+    [InlineData("Standard", SubscriptionTier.Standard)]
+    [InlineData("Premium", SubscriptionTier.Premium)]
+    [InlineData("Enterprise", SubscriptionTier.Enterprise)]
+    public void SubscriptionTier_Should_Parse_Correctly(string tierString, SubscriptionTier expectedTier)
+    {
+        // Act
+        var tier = Enum.Parse<SubscriptionTier>(tierString);
+
+        // Assert
+        tier.Should().Be(expectedTier);
     }
 }

@@ -1,4 +1,6 @@
 using System.Text;
+using Hangfire;
+using Hangfire.SqlServer;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -7,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SaaSPlatform.Application.Interfaces;
 using SaaSPlatform.Application.Services;
+using SaaSPlatform.Infrastructure.BackgroundJobs;
 using SaaSPlatform.Infrastructure.Data;
 using SaaSPlatform.Infrastructure.Identity;
 using SaaSPlatform.Infrastructure.Repositories;
@@ -135,10 +138,27 @@ public partial class Program
             // Add controllers
             builder.Services.AddControllers();
 
+            // Add Hangfire
+            builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+            builder.Services.AddHangfireServer();
+
             // Add application services
             builder.Services.AddScoped<IClientSubscriptionRepository, ClientSubscriptionRepository>();
             builder.Services.AddScoped<IClientSubscriptionService, ClientSubscriptionService>();
             builder.Services.AddScoped<IAzureDeploymentService, AzureDeploymentService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IDeploymentBackgroundJob, DeploymentBackgroundJob>();
 
             // Add authentication services
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -188,6 +208,12 @@ public partial class Program
             });
 
             app.MapControllers();
+
+            // Map Hangfire Dashboard (admin only in production)
+            app.MapHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
 
             // Map SignalR hubs
             app.MapHub<DeploymentHub>("/hubs/deployment");

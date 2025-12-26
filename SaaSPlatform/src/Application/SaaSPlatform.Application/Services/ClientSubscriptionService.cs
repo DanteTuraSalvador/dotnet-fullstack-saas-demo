@@ -39,7 +39,7 @@ public class ClientSubscriptionService : IClientSubscriptionService
             ContactPerson = subscriptionDto.ContactPerson,
             BusinessType = subscriptionDto.BusinessType,
             CreatedDate = DateTime.UtcNow,
-            Status = SubscriptionStatus.Pending
+            SubscriptionStatus = SubscriptionStatus.Pending
         };
 
         var createdSubscription = await _repository.AddAsync(subscription);
@@ -53,7 +53,7 @@ public class ClientSubscriptionService : IClientSubscriptionService
         if (subscription == null)
             throw new ArgumentException("Subscription not found", nameof(id));
 
-        subscription.Status = status;
+        subscription.SubscriptionStatus = status;
         await _repository.UpdateAsync(subscription);
 
         return MapToResponse(subscription);
@@ -67,9 +67,9 @@ public class ClientSubscriptionService : IClientSubscriptionService
 
         var deploymentResult = await _deploymentService.DeploySubscriptionAsync(subscription);
 
-        subscription.Status = SubscriptionStatus.Deployed;
+        subscription.SubscriptionStatus = SubscriptionStatus.Active;
         subscription.AzureResourceGroup = deploymentResult.ResourceGroupName;
-        subscription.WebAppUrl = deploymentResult.WebAppUrl;
+        subscription.DeploymentUrl = deploymentResult.WebAppUrl;
 
         await _repository.UpdateAsync(subscription);
 
@@ -92,9 +92,9 @@ public class ClientSubscriptionService : IClientSubscriptionService
             BusinessType = subscription.BusinessType,
             CreatedDate = subscription.CreatedDate,
             SubmittedDate = subscription.CreatedDate,
-            Status = subscription.Status.ToString(),
+            Status = subscription.SubscriptionStatus.ToString(),
             AzureResourceGroup = subscription.AzureResourceGroup,
-            WebAppUrl = subscription.WebAppUrl
+            WebAppUrl = subscription.DeploymentUrl
         };
     }
 }
