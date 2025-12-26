@@ -1,0 +1,183 @@
+# Azure Pipelines - .NET Full-Stack SaaS Platform
+# Build, Test, Docker Build/Push to Docker Hub
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - SaaSPlatform/**
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+variables:
+  # Build configuration
+  buildConfiguration: 'Release'
+  dotnetVersion: '9.0.x'
+
+  # Docker Hub configuration
+  dockerHubNamespace: 'tengtium'
+
+  # Docker image names
+  apiImage: 'saasplatform-api'
+  clientImage: 'saasplatform-client'
+  adminImage: 'saasplatform-admin'
+
+  # Working directory
+  workingDirectory: 'SaaSPlatform'
+
+  # Image tags
+  imageTag: '$(Build.BuildId)'
+
+stages:
+  # ============================================
+  # Stage 1: Build & Test
+  # ============================================
+  - stage: Build
+    displayName: 'Build & Test'
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build and Run Tests'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetVersion)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore Dependencies'
+            inputs:
+              command: 'restore'
+              projects: '$(workingDirectory)/**/*.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build Solution'
+            inputs:
+              command: 'build'
+              projects: '$(workingDirectory)/**/*.csproj'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run Tests'
+            inputs:
+              command: 'test'
+              projects: '$(workingDirectory)/tests/**/*.csproj'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults'
+              publishTestResults: true
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish Code Coverage'
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+              failIfCoverageEmpty: false
+
+  # ============================================
+  # Stage 2: Docker Build & Push (Docker Hub)
+  # ============================================
+  - stage: Docker
+    displayName: 'Docker Build & Push'
+    dependsOn: Build
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
+    jobs:
+      - job: DockerBuildPush
+        displayName: 'Build and Push Docker Images'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: Docker@2
+            displayName: 'Login to Docker Hub'
+            inputs:
+              containerRegistry: 'DockerHub'
+              command: 'login'
+
+          # Build and push API image
+          - task: Docker@2
+            displayName: 'Build & Push API Image'
+            inputs:
+              containerRegistry: 'DockerHub'
+              repository: '$(dockerHubNamespace)/$(apiImage)'
+              command: 'buildAndPush'
+              Dockerfile: '$(workingDirectory)/src/Api/SaaSPlatform.Api/Dockerfile'
+              buildContext: '$(workingDirectory)'
+              tags: |
+                $(imageTag)
+                latest
+
+          # Build and push Client image
+          - task: Docker@2
+            displayName: 'Build & Push Client Image'
+            inputs:
+              containerRegistry: 'DockerHub'
+              repository: '$(dockerHubNamespace)/$(clientImage)'
+              command: 'buildAndPush'
+              Dockerfile: '$(workingDirectory)/src/Presentation/SaaSPlatform.Web.Client/Dockerfile'
+              buildContext: '$(workingDirectory)'
+              tags: |
+                $(imageTag)
+                latest
+
+          # Build and push Admin image
+          - task: Docker@2
+            displayName: 'Build & Push Admin Image'
+            inputs:
+              containerRegistry: 'DockerHub'
+              repository: '$(dockerHubNamespace)/$(adminImage)'
+              command: 'buildAndPush'
+              Dockerfile: '$(workingDirectory)/src/Presentation/SaaSPlatform.Web.Admin/Dockerfile'
+              buildContext: '$(workingDirectory)'
+              tags: |
+                $(imageTag)
+                latest
+
+          # Output image info for manual deployment
+          - script: |
+              echo "============================================"
+              echo "Docker Images Published to Docker Hub:"
+              echo "============================================"
+              echo "API:    $(dockerHubNamespace)/$(apiImage):$(imageTag)"
+              echo "Client: $(dockerHubNamespace)/$(clientImage):$(imageTag)"
+              echo "Admin:  $(dockerHubNamespace)/$(adminImage):$(imageTag)"
+              echo "============================================"
+              echo ""
+              echo "To deploy manually, run:"
+              echo "  docker pull $(dockerHubNamespace)/$(apiImage):$(imageTag)"
+              echo "  docker pull $(dockerHubNamespace)/$(clientImage):$(imageTag)"
+              echo "  docker pull $(dockerHubNamespace)/$(adminImage):$(imageTag)"
+              echo ""
+              echo "Or use docker-compose with these images."
+              echo "============================================"
+            displayName: 'Print Deployment Info'
+
+  # ============================================
+  # Stage 3: Deploy (Placeholder - Enable when Azure subscription is ready)
+  # ============================================
+  # Uncomment and configure when Azure subscription is enabled
+  # - stage: DeployDev
+  #   displayName: 'Deploy to Dev'
+  #   dependsOn: Docker
+  #   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  #   jobs:
+  #     - deployment: DeployToDev
+  #       displayName: 'Deploy to Dev Environment'
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       environment: 'dev'
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - task: AzureWebAppContainer@1
+  #                 displayName: 'Deploy API Container'
+  #                 inputs:
+  #                   azureSubscription: 'AzureServiceConnection'
+  #                   appName: 'app-saasplatform-api-dev'
+  #                   containers: 'docker.io/$(dockerHubNamespace)/$(apiImage):$(imageTag)'
