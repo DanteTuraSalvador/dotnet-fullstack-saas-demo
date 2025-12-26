@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaaSPlatform.Application.DTOs;
 using SaaSPlatform.Application.Interfaces;
@@ -7,6 +8,7 @@ namespace SaaSPlatform.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SubscriptionsController : ControllerBase
 {
     private readonly IClientSubscriptionService _subscriptionService;

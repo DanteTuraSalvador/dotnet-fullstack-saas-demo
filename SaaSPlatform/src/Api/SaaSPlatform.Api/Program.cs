@@ -1,7 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SaaSPlatform.Application.Interfaces;
 using SaaSPlatform.Application.Services;
 using SaaSPlatform.Infrastructure.Data;
+using SaaSPlatform.Infrastructure.Identity;
 using SaaSPlatform.Infrastructure.Repositories;
 using SaaSPlatform.Infrastructure.Services;
 
@@ -14,12 +19,58 @@ public partial class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
-// Add DbContext
+        // Add DbContext
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        // Add Identity
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 6;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
+
+        // Add JWT Authentication
+        var jwtSettings = builder.Configuration.GetSection("Jwt");
+        var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                ClockSkew = TimeSpan.Zero
+            };
+        });
+
+        builder.Services.AddAuthorization();
 
         builder.Services.AddCors(options =>
         {
@@ -39,9 +90,12 @@ public partial class Program
                         "http://localhost:4500",
                         "https://localhost:4500",
                         "http://localhost:44500",
-                        "https://localhost:44500")
+                        "https://localhost:44500",
+                        "http://localhost:5173",
+                        "https://localhost:5173")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
 
@@ -53,7 +107,18 @@ public partial class Program
         builder.Services.AddScoped<IClientSubscriptionService, ClientSubscriptionService>();
         builder.Services.AddScoped<IAzureDeploymentService, AzureDeploymentService>();
 
+        // Add authentication services
+        builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+        builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
         var app = builder.Build();
+
+        // Seed roles on startup
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            SeedRoles(services).GetAwaiter().GetResult();
+        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -64,8 +129,27 @@ public partial class Program
         app.UseHttpsRedirection();
         app.UseCors("AllowFrontendClients");
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static async Task SeedRoles(IServiceProvider serviceProvider)
+    {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+        string[] roleNames = { AppRoles.Admin, AppRoles.Client };
+
+        foreach (var roleName in roleNames)
+        {
+            var roleExists = await roleManager.RoleExistsAsync(roleName);
+            if (!roleExists)
+            {
+                await roleManager.CreateAsync(new ApplicationRole(roleName, $"{roleName} role"));
+            }
+        }
     }
 }
