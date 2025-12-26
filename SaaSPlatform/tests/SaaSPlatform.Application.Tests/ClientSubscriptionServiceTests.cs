@@ -41,7 +41,7 @@ public class ClientSubscriptionServiceTests
             ContactPerson = subscriptionDto.ContactPerson,
             BusinessType = subscriptionDto.BusinessType,
             CreatedDate = DateTime.UtcNow,
-            Status = SubscriptionStatus.Pending
+            SubscriptionStatus = SubscriptionStatus.Pending
         };
 
         _mockRepository.Setup(r => r.AddAsync(It.IsAny<ClientSubscription>()))
@@ -59,6 +59,7 @@ public class ClientSubscriptionServiceTests
         result.BusinessType.Should().Be(subscriptionDto.BusinessType);
         result.Status.Should().Be(SubscriptionStatus.Pending.ToString());
     }
+
     [Fact]
     public async Task DeploySubscriptionAsync_Should_Update_Subscription_With_Deployment_Info()
     {
@@ -71,7 +72,7 @@ public class ClientSubscriptionServiceTests
             ContactPerson = "Jane Smith",
             BusinessType = "Finance",
             CreatedDate = DateTime.UtcNow,
-            Status = SubscriptionStatus.Approved
+            SubscriptionStatus = SubscriptionStatus.Approved
         };
 
         var deploymentResult = new DeploymentResult
@@ -96,7 +97,7 @@ public class ClientSubscriptionServiceTests
         var result = await _service.DeploySubscriptionAsync(subscription.Id);
 
         // Assert
-        result.Status.Should().Be(SubscriptionStatus.Deployed.ToString());
+        result.Status.Should().Be(SubscriptionStatus.Active.ToString());
         result.AzureResourceGroup.Should().Be(deploymentResult.ResourceGroupName);
         result.WebAppUrl.Should().Be(deploymentResult.WebAppUrl);
 

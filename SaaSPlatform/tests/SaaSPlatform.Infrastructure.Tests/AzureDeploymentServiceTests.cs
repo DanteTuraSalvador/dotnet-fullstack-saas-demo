@@ -1,30 +1,54 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SaaSPlatform.Domain.Entities;
 using SaaSPlatform.Infrastructure.Services;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace SaaSPlatform.Infrastructure.Tests;
 
 public class AzureDeploymentServiceTests
 {
+    private readonly Mock<ILogger<AzureDeploymentService>> _mockLogger;
+    private readonly IConfiguration _configuration;
+    private readonly AzureDeploymentService _service;
+
+    public AzureDeploymentServiceTests()
+    {
+        _mockLogger = new Mock<ILogger<AzureDeploymentService>>();
+
+        var inMemorySettings = new Dictionary<string, string?>
+        {
+            { "Azure:SubscriptionId", "" },
+            { "Azure:Location", "eastus" },
+            { "Azure:UseSimulation", "true" }
+        };
+
+        _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
+        _service = new AzureDeploymentService(_mockLogger.Object, _configuration);
+    }
+
     [Fact]
     public async Task DeploySubscriptionAsync_Should_Return_Successful_Deployment_Result()
     {
         // Arrange
-        var service = new AzureDeploymentService();
         var subscription = new ClientSubscription
         {
+            Id = 1,
             CompanyName = "Test Company",
             ContactEmail = "test@example.com",
             ContactPerson = "John Doe",
             BusinessType = "Technology",
             CreatedDate = DateTime.UtcNow,
-            Status = SubscriptionStatus.Pending
+            SubscriptionStatus = SubscriptionStatus.Pending,
+            SubscriptionTier = SubscriptionTier.Basic
         };
 
         // Act
-        var result = await service.DeploySubscriptionAsync(subscription);
+        var result = await _service.DeploySubscriptionAsync(subscription);
 
         // Assert
         Assert.NotNull(result);
@@ -39,11 +63,10 @@ public class AzureDeploymentServiceTests
     public async Task GetDeploymentStatusAsync_Should_Return_Deployment_Status()
     {
         // Arrange
-        var service = new AzureDeploymentService();
         var deploymentId = "deploy-12345678";
 
         // Act
-        var result = await service.GetDeploymentStatusAsync(deploymentId);
+        var result = await _service.GetDeploymentStatusAsync(deploymentId);
 
         // Assert
         Assert.NotNull(result);
@@ -56,13 +79,40 @@ public class AzureDeploymentServiceTests
     public async Task CancelDeploymentAsync_Should_Return_True()
     {
         // Arrange
-        var service = new AzureDeploymentService();
         var deploymentId = "deploy-12345678";
 
         // Act
-        var result = await service.CancelDeploymentAsync(deploymentId);
+        var result = await _service.CancelDeploymentAsync(deploymentId);
 
         // Assert
         Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(SubscriptionTier.Basic)]
+    [InlineData(SubscriptionTier.Standard)]
+    [InlineData(SubscriptionTier.Premium)]
+    [InlineData(SubscriptionTier.Enterprise)]
+    public async Task DeploySubscriptionAsync_Should_Handle_Different_Tiers(SubscriptionTier tier)
+    {
+        // Arrange
+        var subscription = new ClientSubscription
+        {
+            Id = 1,
+            CompanyName = "Tier Test Company",
+            ContactEmail = "tier@example.com",
+            ContactPerson = "Test Person",
+            BusinessType = "Technology",
+            CreatedDate = DateTime.UtcNow,
+            SubscriptionStatus = SubscriptionStatus.Approved,
+            SubscriptionTier = tier
+        };
+
+        // Act
+        var result = await _service.DeploySubscriptionAsync(subscription);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Success);
     }
 }
