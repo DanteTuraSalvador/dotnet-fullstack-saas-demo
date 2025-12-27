@@ -2,37 +2,43 @@
 
 A comprehensive SaaS platform demonstrating full-stack .NET development capabilities with multiple frontend technologies, cloud automation, and enterprise practices.
 
-## Development Plan - .NET Full-Stack SaaS Demo
-
-### Project Timeline: 6 Sprints (11 weeks)
-
-### Current Status: Sprint 2 - Frontend Modernization & Aspire Orchestration (In Progress)
-
-**Goals:**
-- [x] Create Aspire solution structure
-- [x] Implement ClientWeb.Razor subscription form
-- [x] Implement AdminWeb.Razor dashboard
-- [x] Build Web API with CRUD operations
-- [x] Set up SQL Server + Entity Framework
-- [x] Integrate frontend applications with API
-- [x] Create manual Azure deployment service
-- [x] Basic Docker containerization
-
-**Deliverables:**
-- [x] Working subscription workflow
-- [x] Database with ClientSubscription model
-- [x] REST API endpoints
-- [x] Frontend-to-API integration
-- [x] Unified Tailwind UI across every frontend (Angular, React, Blazor, Razor, MVC, Admin portals)
-
-## 🚀 Project Overview
+## Project Overview
 
 This project showcases expertise across the entire .NET ecosystem through a functional SaaS platform that automates Azure resource provisioning for clients. The platform serves as both a technical demonstration and a portfolio piece highlighting modern development practices.
 
-## 🗃️ Current Architecture
+## Features
+
+### Core Platform
+- **Multi-tenant SaaS Architecture** - Clean Architecture with Domain, Application, Infrastructure, and API layers
+- **Client Subscription Management** - Full CRUD operations for managing client subscriptions
+- **Azure Resource Provisioning** - Automated deployment of Azure resources (Resource Groups, App Service Plans, Web Apps, SQL Databases)
+- **Background Job Processing** - Hangfire for asynchronous deployment tasks
+- **Email Notifications** - SendGrid integration for deployment status notifications
+- **Real-time Updates** - SignalR hub for live deployment progress
+
+### Authentication & Security
+- **JWT Bearer Authentication** - Token-based authentication for API access
+- **ASP.NET Core Identity** - User management with role-based authorization
+- **Role-Based Access Control** - Admin and Client roles with protected endpoints
+- **Refresh Token Support** - Secure token refresh mechanism
+
+### Observability & Operations
+- **Health Checks** - SQL Server and self-health monitoring endpoints
+- **Structured Logging** - Serilog with configurable sinks (Console, File, Seq)
+- **Request Logging** - HTTP request/response logging for debugging
+
+### Frontend Technologies
+- **ASP.NET Core Razor Pages** - Server-rendered client and admin applications
+- **ASP.NET Core MVC** - Traditional MVC client and admin variants
+- **Angular 18 SPA** - Modern TypeScript SPA consuming the API
+- **React 19 SPA** - Vite + TypeScript SPA with shared workflows
+- **Blazor WebAssembly** - .NET-based SPA consuming the API
+- **Tailwind CSS** - Consistent styling across all frontends
+
+## Architecture
 
 ```
-SaaSPlatform.sln
+SaaSPlatform/
 ├── src/
 │   ├── Core/
 │   │   └── SaaSPlatform.Domain/              # Entities, Enums, Interfaces
@@ -44,303 +50,318 @@ SaaSPlatform.sln
 │   │   └── SaaSPlatform.Api/                 # Web API (REST endpoints)
 │   └── Presentation/
 │       ├── SaaSPlatform.Web.Client/          # Client Razor Pages
-│       └── SaaSPlatform.Web.Admin/           # Admin Razor Pages
+│       ├── SaaSPlatform.Web.Admin/           # Admin Razor Pages
+│       ├── SaaSPlatform.Web.Client.Mvc/      # Client MVC
+│       ├── SaaSPlatform.Web.Admin.Mvc/       # Admin MVC
+│       ├── SaaSPlatform.Web.Client.Angular/  # Angular SPA
+│       ├── SaaSPlatform.Web.Client.React/    # React SPA
+│       └── SaaSPlatform.Web.Client.Blazor/   # Blazor WebAssembly
 ├── tests/
-├── .aspire/
-│   ├── SaaSPlatform.AppHost/                 # Aspire orchestration
-│   └── SaaSPlatform.ServiceDefaults/         # Shared configuration
-├── .gitignore
-└── SaaSPlatform.sln
+│   ├── SaaSPlatform.Domain.Tests/
+│   ├── SaaSPlatform.Application.Tests/
+│   ├── SaaSPlatform.Infrastructure.Tests/
+│   └── SaaSPlatform.Api.Tests/
+└── .aspire/
+    ├── SaaSPlatform.AppHost/                 # Aspire orchestration
+    └── SaaSPlatform.ServiceDefaults/         # Shared configuration
 ```
 
-## 🏗️ Implemented Features (Sprint 1 - Phase A, B, C)
+## Technology Stack
 
-### ✅ Phase 1A: Project Setup & Solution Structure
-- Professional .NET solution structure following Clean Architecture principles
-- Proper project naming conventions with `SaaSPlatform.` prefix
-- Aspire orchestration setup for cloud-native deployment
+| Category | Technologies |
+|----------|-------------|
+| **Backend** | .NET 9.0, ASP.NET Core Web API, Entity Framework Core 9.0 |
+| **Database** | SQL Server (LocalDB for development) |
+| **Authentication** | ASP.NET Core Identity, JWT Bearer Tokens |
+| **Background Jobs** | Hangfire with SQL Server storage |
+| **Email** | SendGrid |
+| **Real-time** | SignalR |
+| **Cloud** | Azure SDK (Azure.ResourceManager) |
+| **Logging** | Serilog |
+| **Frontend** | Razor Pages, MVC, Angular 18, React 19, Blazor WASM |
+| **Styling** | Tailwind CSS 3.4 |
+| **Testing** | xUnit, Moq, FluentAssertions |
+| **DevOps** | Docker, .NET Aspire, Azure DevOps Pipelines |
 
-### ✅ Phase 1B: Database Models & DbContext
-- `ClientSubscription` entity with comprehensive properties
-- DTOs for data transfer between layers
-- Entity Framework Core DbContext with proper configuration
-- Database migrations and LocalDB setup
-
-### ✅ Phase 1C: Web API Controllers
-- RESTful API endpoints for subscription management
-- Repository pattern implementation
-- Service layer with business logic
-- Full CRUD operations with proper HTTP status codes
-- Dependency injection configuration
-
-## 🛠️ Technology Stack
-
-### Backend & Infrastructure
-- **.NET 9.0** - Latest .NET framework
-- **ASP.NET Core Web API** - RESTful API backend
-- **Entity Framework Core 9.0** - ORM with code-first migrations
-- **SQL Server LocalDB** - Development database
-- **.NET Aspire** - Application orchestration
-
-### Frontend Technologies
-- **ASP.NET Core Razor Pages** - Server-rendered applications
-- **ASP.NET Core MVC** - Traditional MVC admin/client variants
-- **Angular 18 SPA** - Modern client experience consuming shared API
-- **React 19 SPA (Vite + TypeScript)** - Alternate SPA showcasing the same workflows
-- **Blazor WebAssembly** - .NET-based SPA consuming the shared API
-- **Clean Architecture** - Proper separation of concerns
-
-### UI Styling & Components
-- **Tailwind CSS 3.4** powers every frontend (Angular, React, Blazor, Razor, MVC, Admin) for a consistent system
-- Custom utility classes (`.page-shell`, `.surface-card`, etc.) live in each app’s global stylesheet for shared spacing/typography
-- Bootstrap assets have been removed; if you see stale files locally, clear `bin/obj` and re-run Aspire
-
-### DevOps & Observability
-- **.NET Aspire** - Application orchestration
-- **Health Checks** - ASP.NET Core health monitoring
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
+
 - .NET 9.0 SDK
 - SQL Server LocalDB (included with Visual Studio) or SQL Server Express
+- Node.js 18+ (for Angular and React SPAs)
 
 ### Quick Start
+
 ```bash
-# Clone the repository (if applicable)
-# git clone [repository-url]
+# Clone the repository
+git clone https://github.com/yourusername/dotnet-fullstack-saas-demo.git
+cd dotnet-fullstack-saas-demo/SaaSPlatform
 
-# Navigate to the project directory
-cd SaaSPlatform
-
-# Restore .NET workloads
+# Restore dependencies
 dotnet restore
 
-# Install SPA dependencies (first run only)
-cd src/Presentation/SaaSPlatform.Web.Client.Angular && npm install
-cd ../SaaSPlatform.Web.Client.React && npm install
-cd ../../../..  # back to the repo root
-
-# Apply the latest migrations
+# Apply database migrations
 dotnet ef database update \
   --project src/Infrastructure/SaaSPlatform.Infrastructure \
   --startup-project src/Api/SaaSPlatform.Api
 
-# Launch the entire distributed app (Aspire orchestrates API + frontends)
-dotnet run --project SaaSPlatform.AppHost/SaaSPlatform.AppHost.csproj
+# Run the API
+dotnet run --project src/Api/SaaSPlatform.Api
 ```
 
-When the Aspire dashboard opens, use it to reach each frontend (Angular, React, Blazor, Razor, MVC, Admin).  
-Aspire automatically runs the SPA dev servers via the included PowerShell scripts, so hot reload works out of the box.
+### Running with .NET Aspire (Recommended)
 
-### Angular Client (SPA)
+```bash
+# Run with Aspire orchestration (starts all services)
+dotnet run --project .aspire/SaaSPlatform.AppHost
+```
+
+### Running Individual SPAs
+
+**Angular:**
 ```bash
 cd src/Presentation/SaaSPlatform.Web.Client.Angular
-npm install                      # first run
-npm start                        # serves on http://localhost:4200
+npm install
+npm start  # http://localhost:4200
 ```
-The Angular app calls the shared API at `https://localhost:7264` by default (see `src/environments/environment*.ts`).
-Aspire auto-starts it via `run-angular.ps1`, but you can still run it manually for focused SPA work.
 
-### React Client (SPA)
+**React:**
 ```bash
 cd src/Presentation/SaaSPlatform.Web.Client.React
-npm install          # first run
-npm run dev          # serves on http://localhost:5173 by default
+npm install
+npm run dev  # http://localhost:5173
 ```
-Set `VITE_API_BASE_URL` in `.env.*` if you expose the API on a different host/port. Under Aspire, the React client is accessible via the proxy URL (default https://localhost:44400).
 
-### Blazor Client (SPA)
+**Blazor:**
 ```bash
 cd src/Presentation/SaaSPlatform.Web.Client.Blazor
-dotnet run
+dotnet run  # https://localhost:44500
 ```
-The Blazor WebAssembly app reads `ApiBaseUrl` from `wwwroot/appsettings*.json` (defaults to `https://localhost:7264`). When hosted via Aspire, use the portal link (default https://localhost:44500) to open the dev server.
 
-### Using .NET Aspire (Recommended)
+## API Documentation
+
+### Base URL
+`https://localhost:7264/api`
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Register a new user | No |
+| POST | `/auth/login` | Login and get JWT token | No |
+| POST | `/auth/refresh` | Refresh JWT token | No |
+| POST | `/auth/revoke` | Revoke refresh token | Yes |
+| GET | `/auth/me` | Get current user info | Yes |
+
+#### Register Request
+```json
+POST /api/auth/register
+{
+  "email": "user@example.com",
+  "password": "Password123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+#### Login Request
+```json
+POST /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "Password123"
+}
+```
+
+#### Login Response
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "abc123...",
+  "expiration": "2025-12-28T12:00:00Z"
+}
+```
+
+### Subscription Endpoints
+
+All subscription endpoints require authentication (Bearer token).
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/subscriptions` | Get all subscriptions |
+| GET | `/subscriptions/{id}` | Get subscription by ID |
+| POST | `/subscriptions` | Create new subscription |
+| PUT | `/subscriptions/{id}/status` | Update subscription status |
+| POST | `/subscriptions/{id}/deploy` | Deploy Azure resources |
+| DELETE | `/subscriptions/{id}` | Delete subscription |
+
+#### Create Subscription Request
+```json
+POST /api/subscriptions
+{
+  "companyName": "Acme Corp",
+  "contactEmail": "contact@acme.com",
+  "contactPerson": "Jane Smith",
+  "businessType": "Technology"
+}
+```
+
+#### Subscription Response
+```json
+{
+  "id": 1,
+  "companyName": "Acme Corp",
+  "contactEmail": "contact@acme.com",
+  "contactPerson": "Jane Smith",
+  "businessType": "Technology",
+  "createdDate": "2025-12-27T10:00:00Z",
+  "subscriptionStatus": "Pending",
+  "subscriptionTier": "Basic",
+  "azureResourceGroup": null,
+  "deploymentUrl": null
+}
+```
+
+#### Update Status Request
+```json
+PUT /api/subscriptions/1/status
+"Approved"
+```
+
+Valid status values: `Pending`, `Approved`, `Provisioning`, `Active`, `Failed`, `Suspended`, `Cancelled`
+
+### Health Check Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `/health` | Full health check (all components) |
+| `/health/ready` | Readiness probe (database connectivity) |
+| `/health/live` | Liveness probe (self-check) |
+
+### SignalR Hub
+
+Connect to `/hubs/deployment` for real-time deployment updates.
+
+**Events:**
+- `DeploymentProgress` - Receives deployment progress updates
+- `DeploymentComplete` - Receives deployment completion notification
+
+### Hangfire Dashboard
+
+Access the Hangfire dashboard at `/hangfire` (requires Admin role in production).
+
+## Configuration
+
+### appsettings.json
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=SaaSPlatformDb;Trusted_Connection=True;"
+  },
+  "Jwt": {
+    "SecretKey": "your-secret-key-at-least-32-characters",
+    "Issuer": "SaaSPlatform",
+    "Audience": "SaaSPlatformClients",
+    "AccessTokenExpirationMinutes": 60,
+    "RefreshTokenExpirationDays": 7
+  },
+  "Azure": {
+    "SubscriptionId": "your-azure-subscription-id",
+    "TenantId": "your-tenant-id",
+    "SimulationMode": true
+  },
+  "SendGrid": {
+    "ApiKey": "your-sendgrid-api-key",
+    "FromEmail": "noreply@yourplatform.com",
+    "FromName": "SaaS Platform"
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information"
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      { "Name": "File", "Args": { "path": "logs/log-.txt", "rollingInterval": "Day" } }
+    ]
+  }
+}
+```
+
+## Testing
+
+### Run All Tests
+
 ```bash
-# Run with .NET Aspire orchestration
-dotnet run --project SaaSPlatform.AppHost
+dotnet test
 ```
 
-## 📁 Project Structure Details
+### Test Coverage
 
-### Core Layer (Domain)
-- **SaaSPlatform.Domain**: Contains entities, enums, and interfaces that represent the business domain
-- `Entities/ClientSubscription.cs`: Main entity for client subscription requests
-- `SubscriptionStatus` enum: Status tracking for subscription lifecycle
+- **Domain Tests** - Entity validation and business rules
+- **Application Tests** - Service layer and business logic
+- **Infrastructure Tests** - Repository and external service integration
+- **API Tests** - Controller unit tests
 
-### Application Layer
-- **SaaSPlatform.Application**: Contains business logic, DTOs, and service interfaces
-- `DTOs/`: Data Transfer Objects for API communication
-- `Interfaces/`: Service and repository interfaces
-- `Services/`: Implementation of business logic
+## Docker Support
 
-### Infrastructure Layer
-- **SaaSPlatform.Infrastructure**: Contains implementation details like DbContext and repositories
-- `Data/AppDbContext.cs`: Entity Framework Core DbContext
-- `Repositories/`: Implementation of repository interfaces
-- `Migrations/`: Database migration files
+### Run with Docker Compose
 
-### API Layer
-- **SaaSPlatform.Api**: RESTful Web API endpoints
-- `Controllers/SubscriptionsController.cs`: API endpoints for subscription management
-- `Program.cs`: Application startup and dependency injection configuration
+```bash
+# Build and start all services
+docker-compose up -d
 
-### Presentation Layer
-- **SaaSPlatform.Web.Client**: Client-facing web application
-- **SaaSPlatform.Web.Admin**: Admin dashboard for subscription management
+# Using PowerShell script
+.\run-docker.ps1 up      # Start all services
+.\run-docker.ps1 down    # Stop all services
+.\run-docker.ps1 logs    # View logs
+.\run-docker.ps1 status  # Check service status
+```
 
-### Orchestration
-- **SaaSPlatform.AppHost**: .NET Aspire orchestration for running all services
-- **SaaSPlatform.ServiceDefaults**: Shared configuration and services
+### Docker Services
 
-## 🎯 API Endpoints
+| Service | Port | Description |
+|---------|------|-------------|
+| API | 5153 | REST API endpoints |
+| Client Web | 5000 | Client-facing web app |
+| Admin Web | 5001 | Admin dashboard |
+| SQL Server | 1433 | Database |
+| Seq | 5342 | Log aggregation |
+| Azurite | 10000-10002 | Azure Storage emulator |
 
-### Client Subscriptions
-- `GET /api/subscriptions` - Get all subscriptions
-- `GET /api/subscriptions/{id}` - Get a specific subscription
-- `POST /api/subscriptions` - Create a new subscription
-- `PUT /api/subscriptions/{id}/status` - Update subscription status
-- `DELETE /api/subscriptions/{id}` - Delete a subscription
+## Azure Deployment
 
-## 🗓️ Development Plan Overview
+The platform supports automated Azure resource provisioning:
 
-### Sprint 1: Foundation & Core Platform (2 weeks)
-**Goals:**
-- [x] Create Aspire solution structure
-- [x] Implement ClientWeb.Razor subscription form
-- [x] Implement AdminWeb.Razor dashboard
-- [x] Build Web API with CRUD operations
-- [x] Set up SQL Server + Entity Framework
-- [x] Integrate frontend applications with API
-- [x] Create manual Azure deployment service
-- [x] Basic Docker containerization
-- [x] **SET UP TESTING INFRASTRUCTURE**
+1. **Resource Group** - Isolated container for client resources
+2. **App Service Plan** - Hosting plan based on subscription tier
+3. **Web App** - Client's web application
+4. **SQL Server** - Database server
+5. **SQL Database** - Client's database
 
-**Deliverables:**
-- Working subscription workflow
-- Database with ClientSubscription model
-- REST API endpoints
-- Azure CLI script generation
-- Basic Bootstrap UI
+### Subscription Tiers
 
-### Sprint 2: Multiple Frontend Technologies (2 weeks)
-**Goals:**
-- [x] Create MVC versions of client/admin interfaces
-- [x] Build Angular SPA client interface
-- [x] Build React SPA client interface
-- [x] Build Blazor SPA client interface
-- [ ] Ensure all frontends use shared Web API
-- [ ] Implement consistent styling
+| Tier | App Service SKU | SQL DTU |
+|------|-----------------|---------|
+| Basic | B1 | 5 |
+| Standard | S1 | 10 |
+| Premium | P1V2 | 50 |
+| Enterprise | P2V2 | 100 |
 
-**Deliverables:**
-- [x] 5 frontend technologies working
-- [ ] Shared API consumption patterns
-- [ ] Consistent user experience
-- [ ] Technology comparison documentation
-
-### Sprint 3: Authentication & Security (2 weeks)
-**Goals:**
-- [ ] Implement JWT Bearer token authentication
-- [ ] Add Cookie authentication for server-rendered apps
-- [ ] Create role-based authorization (Admin/Client)
-- [ ] Build user registration/login pages
-- [ ] Secure API endpoints and UI routes
-
-**Deliverables:**
-- Multiple auth strategies working
-- Protected routes and endpoints
-- User management system
-- Security best practices implemented
-
-### Sprint 4: DevOps & Containerization (2 weeks)
-**Goals:**
-- [ ] Complete Docker containerization
-- [ ] Set up .NET Aspire orchestration
-- [ ] Implement Serilog + Seq logging
-- [ ] Add health check endpoints
-- [ ] Create basic CI/CD pipeline
-
-**Deliverables:**
-- Full Docker Compose setup
-- Structured logging with Seq
-- Health monitoring
-- GitHub Actions pipeline
-
-### Sprint 5: Advanced Features & Polish (2 weeks)
-**Goals:**
-- [ ] Implement automated Azure deployment
-- [ ] Add email notification system
-- [ ] Create real-time updates with SignalR
-- [ ] Build enhanced admin dashboard
-- [ ] Improve responsive design
-
-**Deliverables:**
-- One-click Azure deployment
-- Email notifications
-- Real-time status updates
-- Professional admin interface
-
-### Sprint 6: Final Integration & Demo Prep (1 week)
-**Goals:**
-- [ ] Complete integration testing
-- [ ] Prepare demo data and scenarios
-- [ ] Create documentation
-- [ ] Performance optimization
-- [ ] Demo script preparation
-
-**Deliverables:**
-- Fully integrated platform
-- Comprehensive documentation
-- Demo walkthrough script
-- Production-ready codebase
-
-## 🎯 Success Metrics
-- All frontend technologies functional
-- Complete Azure automation workflow
-- Multiple authentication strategies
-- Production-ready DevOps setup
-- Professional demo capability
-
-## 🛠 Technology Decisions
-- Database: SQL Server + EF Core 9
-- Authentication: JWT + Cookies + Azure AD
-- Frontends: Razor Pages, MVC, Angular, React
-- Cloud: Azure SDK + Resource Manager
-- DevOps: Docker + .NET Aspire
-- Monitoring: Serilog + Seq + Prometheus + Grafana
-
-## 🧪 Testing Infrastructure
-
-### Test Projects Structure
-
-We have implemented a comprehensive testing infrastructure with dedicated test projects for each layer of our application:
-
-- **SaaSPlatform.Domain.Tests**: Unit tests for domain entities and business logic
-- **SaaSPlatform.Application.Tests**: Unit tests for application services and business logic
-- **SaaSPlatform.Infrastructure.Tests**: Unit and integration tests for data access and external services
-- **SaaSPlatform.Api.Tests**: Unit and integration tests for API controllers and endpoints
-
-### Testing Tools & Frameworks
-
-- **xUnit**: Primary testing framework
-- **Moq**: Mocking framework for isolating dependencies
-- **FluentAssertions**: Fluent API for assertions to improve test readability
-
-### Continuous Integration
-
-We have set up GitHub Actions for continuous testing with automatic test execution on every push and pull request.
-
-## 🤝 Development Workflow
+## Development Workflow
 
 ### Branch Strategy
+
 - `main` - Production-ready code
 - `develop` - Integration branch
 - `feature/*` - Feature development
 - `sprint/*` - Sprint-specific work
 
 ### Commit Convention
+
 ```
 feat: add new feature
 fix: resolve bug
@@ -349,52 +370,14 @@ refactor: improve code structure
 test: add or update tests
 ```
 
-## 🐳 Docker Containerization
+## License
 
-We have implemented Docker containerization for all services in our SaaS platform:
+MIT License - See LICENSE file for details.
 
-### Docker Services
-- **API Service** - REST API endpoints (port 5153)
-- **Client Web** - Client-facing web application (port 5000)
-- **Admin Web** - Administrator dashboard (port 5001)
-- **SQL Server** - Database service (port 1433)
-- **Azurite** - Azure Storage emulator (ports 10000-10002)
-- **Seq** - Logging service (port 5342)
+## Contributing
 
-### Docker Files
-- [docker-compose.yml](file:///c%3A/Users/Dante%20Salvador/dotnet-fullstack-saas-demo/SaaSPlatform/docker-compose.yml) - Orchestration file for all services
-- [src/Api/SaaSPlatform.Api/Dockerfile](file:///c%3A/Users/Dante%20Salvador/dotnet-fullstack-saas-demo/SaaSPlatform/src/Api/SaaSPlatform.Api/Dockerfile) - API service Dockerfile
-- [src/Presentation/SaaSPlatform.Web.Client/Dockerfile](file:///c%3A/Users/Dante%20Salvador/dotnet-fullstack-saas-demo/SaaSPlatform/src/Presentation/SaaSPlatform.Web.Client/Dockerfile) - Client web Dockerfile
-- [src/Presentation/SaaSPlatform.Web.Admin/Dockerfile](file:///c%3A/Users/Dante%20Salvador/dotnet-fullstack-saas-demo/SaaSPlatform/src/Presentation/SaaSPlatform.Web.Admin/Dockerfile) - Admin web Dockerfile
-- [run-docker.ps1](file:///c%3A/Users/Dante%20Salvador/dotnet-fullstack-saas-demo/SaaSPlatform/run-docker.ps1) - PowerShell script to easily manage Docker services
-
-### Running with Docker
-To run the entire platform with Docker:
-
-```bash
-# Build and start all services
-docker-compose up -d
-
-# Or use our PowerShell script for easier management:
-.\run-docker.ps1 up     # Start all services
-.\run-docker.ps1 down   # Stop all services
-.\run-docker.ps1 logs   # View logs
-.\run-docker.ps1 build  # Build all services
-.\run-docker.ps1 status # Check service status
-```
-
-This Docker setup provides a complete local development environment that simulates Azure services using containerized alternatives.
-
-## ✅ Sprint 1 - Completed
-
-All goals for Sprint 1 have been successfully completed! We have built a fully functional SaaS platform with:
-
-1. **Clean Architecture** - Well-structured solution with separate layers
-2. **Complete CRUD Operations** - Full API for managing client subscriptions
-3. **Database Integration** - SQL Server with Entity Framework
-4. **Frontend Applications** - Client and Admin web interfaces
-5. **Testing Infrastructure** - Comprehensive test suite with 12 passing tests
-6. **Azure Deployment Service** - Simulated Azure deployment workflow
-7. **Docker Containerization** - Containerized services for easy deployment
-
-The platform is ready for the next sprint which will focus on implementing multiple frontend technologies.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
